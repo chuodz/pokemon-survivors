@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Survivors - PokeTibia MMO Edition</title>
+    <title>Poket Survivor - PokeTibia MMO Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; user-select: none; }
@@ -182,7 +182,7 @@
 <body>
 
     <div class="game-panel" id="main-game-panel">
-        <h1>POKÉMON SURVIVORS</h1>
+        <h1>POKET SURVIVOR</h1>
         
         <!-- BARRA SUPERIOR DE RECURSOS ESTILO SURVIVORS -->
         <div class="top-resource-bar">
@@ -542,4 +542,169 @@
                 if (activePoke.hp > 0) { alert("El Pokémon no está debilitado."); return; }
                 playerData.revives--;
                 activePoke.hp = Math.floor(activePoke.maxHp * 0.5);
-            } else if (itemKey ===
+            } else if (itemKey === 'elixirs') {
+                if (playerData.elixirs <= 0) { alert("No tienes Elixires."); return; }
+                playerData.elixirs--;
+                activePoke.hp = activePoke.maxHp;
+            }
+            updateUI();
+            alert(`✨ ¡Ítem usado en ${activePoke.name}!`);
+        }
+
+        function swapBoxWithTeam(boxIndex, teamIndex) {
+            let boxPoke = playerData.box[boxIndex];
+            let teamPoke = playerData.team[teamIndex];
+            playerData.team[teamIndex] = boxPoke;
+            playerData.box[boxIndex] = teamPoke;
+            updateUI();
+            alert(`🔄 ¡Intercambio exitoso!`);
+        }
+
+        function sellBoxPokemon(index) {
+            let p = playerData.box[index];
+            let prices = { "Común": 100, "Místico": 500, "Legendario": 2500, "Ultraente": 5000, "Jefe Ultra": 15000, "Shiny": 10000 };
+            let val = prices[p.rarity] || 100;
+            if (p.shiny) val = 10000;
+            playerData.coins += val;
+            playerData.box.splice(index, 1);
+            updateUI();
+            alert(`💰 Vendiste a ${p.name} por $${val}`);
+        }
+
+        function changeRoute() {
+            playerData.routeLevel = Math.min(991, playerData.routeLevel + 10);
+            document.getElementById('depot-status').innerText = `Zona: Ruta ${playerData.routeLevel} (Lv.+${playerData.routeLevel})`;
+            spawnEnemy();
+            alert(`🗺️ ¡Viajando a Ruta ${playerData.routeLevel}!`);
+        }
+
+        function buyItem(k, q, p) {
+            let cost = p * q;
+            if (isAdmin || playerData.coins >= cost) {
+                if (!isAdmin) playerData.coins -= cost;
+                playerData[k] += q;
+                updateUI();
+                alert(`🛒 ¡Compra exitosa!`);
+            } else { alert("¡Faltan PokéDollars!"); }
+        }
+
+        function sellLoot() {
+            playerData.coins += 1000;
+            updateUI();
+            alert("💰 ¡Loot vendido por $1000!");
+        }
+
+        function toggleModal(id) {
+            let m = document.getElementById(id);
+            if (!m) return;
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function setChatMode(mode) {
+            chatMode = mode;
+            let btnG = document.getElementById('btn-global');
+            let btnP = document.getElementById('btn-private');
+            let privBox = document.getElementById('private-recipient-box');
+            if (mode === 'global') {
+                btnG.style.background = '#28a745'; btnP.style.background = '#444'; privBox.style.display = 'none';
+            } else {
+                btnP.style.background = '#28a745'; btnG.style.background = '#444'; privBox.style.display = 'block';
+            }
+        }
+
+        function selectPoke(idx) {
+            playerData.activePokeIndex = idx;
+            updateUI();
+        }
+
+        function sendChatMessage() {
+            let input = document.getElementById('chat-input');
+            let text = input.value.trim();
+            if(!text) return;
+            let box = document.getElementById('chat-messages');
+            let time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            if (chatMode === 'global') {
+                box.innerHTML += `<div style="color:#00ffcc;">[${time}] [Global] 👑 chuodz: ${text}</div>`;
+            } else {
+                let to = document.getElementById('chat-to-user').value.trim() || 'Entrenador';
+                box.innerHTML += `<div style="color:#ff77ff;">[${time}] [Privado a ${to}]: ${text}</div>`;
+            }
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function updateUI() {
+            document.getElementById('coins').innerText = playerData.coins;
+            document.getElementById('pokeballs').innerText = playerData.pokeballs + playerData.greatballs + playerData.ultraballs + playerData.masterballs;
+            
+            if (activeEnemy) {
+                document.getElementById('e-name').innerText = activeEnemy.name;
+                document.getElementById('e-lvl').innerText = activeEnemy.level;
+                document.getElementById('e-rarity').innerText = `[${activeEnemy.rarity}]`;
+                document.getElementById('e-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${activeEnemy.id}.png`;
+                let ePct = Math.max(0, (activeEnemy.currentHp / activeEnemy.maxHp) * 100);
+                document.getElementById('e-hp-bar').style.width = ePct + '%';
+                document.getElementById('e-hp-text').innerText = `${activeEnemy.currentHp}/${activeEnemy.maxHp} HP`;
+            }
+
+            let activePoke = playerData.team[playerData.activePokeIndex];
+            if (activePoke) {
+                document.getElementById('p-name').innerText = activePoke.name;
+                document.getElementById('p-lvl').innerText = activePoke.level;
+                document.getElementById('p-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${activePoke.id}.png`;
+                document.getElementById('p-rarity-txt').innerText = `[${activePoke.rarity}]`;
+                let pPct = Math.max(0, (activePoke.hp / activePoke.maxHp) * 100);
+                document.getElementById('p-hp-bar').style.width = pPct + '%';
+                document.getElementById('p-hp-text').innerText = `${activePoke.hp}/${activePoke.maxHp} HP`;
+            }
+
+            let html = "";
+            playerData.team.forEach((p, i) => {
+                let act = i === playerData.activePokeIndex ? "active" : "";
+                let pct = (p.hp / p.maxHp) * 100;
+                let cardColor = p.shiny ? "#ffd700" : (p.rarity === "Jefe Ultra" ? "#00ffff" : (p.rarity === "Ultraente" ? "#8a2be2" : (p.rarity === "Legendario" ? "#ff4444" : (p.rarity === "Místico" ? "#aa44ff" : "#ffffff"))));
+                html += `<div class="poke-slot ${act}" onclick="selectPoke(${i})" style="border-color:${cardColor};">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png">
+                    <b style="color:${cardColor}">${p.name}</b> (Lv.${p.level})<br>
+                    <div class="bar-bg"><div class="bar-fill hp-fill" style="width:${pct}%"></div></div>
+                    ${p.hp}/${p.maxHp} HP
+                </div>`;
+            });
+            document.getElementById('team-container').innerHTML = html;
+
+            let pDexHTML = "<b>📖 Pokédex Nacional & Ultraentes:</b><br>";
+            for (let id in pokemonNames) {
+                let data = playerData.pokedex[id] || { seen: 0, caught: 0 };
+                pDexHTML += `<div style="margin:3px 0; background:#1f192d; padding:4px; border-radius:3px;">` +
+                            `<b>#${id} ${pokemonNames[id]}</b> | Vistos: ${data.seen} | Atrapados: ${data.caught}</div>`;
+            }
+            document.getElementById('pokedex-content').innerHTML = pDexHTML;
+
+            let invHTML = `<b>🔴 Pokéballs:</b> ${playerData.pokeballs} | <b>Great:</b> ${playerData.greatballs}<br>` +
+                          `<b>🟣 Ultra:</b> ${playerData.ultraballs} | <b>🟡 Master:</b> ${playerData.masterballs}<br><hr style="border-color:#444;">` +
+                          `<b>🧪 Poción (+100 HP):</b> ${playerData.potions} <button onclick="useInventoryItem('potions')" style="background:#28a745; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:6px; font-family:'Press Start 2P';">Usar</button><br>` +
+                          `<b>🧪 Super Poción:</b> ${playerData.superpotions} <button onclick="useInventoryItem('superpotions')" style="background:#28a745; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:6px; font-family:'Press Start 2P';">Usar</button><br>` +
+                          `<b>✨ Revivir:</b> ${playerData.revives} <button onclick="useInventoryItem('revives')" style="background:#d97706; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:6px; font-family:'Press Start 2P';">Usar</button><br>` +
+                          `<b>💖 Elixir Full:</b> ${playerData.elixirs} <button onclick="useInventoryItem('elixirs')" style="background:#3b4cca; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:6px; font-family:'Press Start 2P';">Usar</button>`;
+            document.getElementById('inventory-content').innerHTML = invHTML;
+
+            let boxHTML = "<b>📦 Caja Pokémon:</b><br>";
+            if (playerData.box.length > 0) {
+                playerData.box.forEach((bPoke, bIdx) => {
+                    let price = bPoke.shiny ? 10000 : (bPoke.rarity === "Jefe Ultra" ? 15000 : (bPoke.rarity === "Ultraente" ? 5000 : 100));
+                    boxHTML += `<div style="margin:3px 0; background:#1f192d; padding:4px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">` +
+                               `<span><b>${bPoke.name}</b> [${bPoke.rarity}]</span>` +
+                               `<div>` +
+                               `<button onclick="swapBoxWithTeam(${bIdx}, 0)" style="background:#3b4cca; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:6px; font-family:'Press Start 2P';">🔄 #1</button>` +
+                               `<button onclick="sellBoxPokemon(${bIdx})" style="background:#d97706; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:6px; font-family:'Press Start 2P';">💰 Vender</button>` +
+                               `</div></div>`;
+                });
+            } else {
+                boxHTML += "<i>La caja está vacía.</i>";
+            }
+            document.getElementById('box-content').innerHTML = boxHTML;
+        }
+    </script>
+</body>
+</html>
