@@ -1,680 +1,216 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeTibia MMO - Ultra Necrozma & Intercambios</title>
-    <style>
-        body { 
-            margin: 0; 
-            background: #121212; 
-            color: #fff; 
-            text-align: center; 
-            font-family: Arial, sans-serif; 
-        }
-        h1 { color: #ffcb05; font-size: 14px; margin: 2px 0; }
-        .game-panel {
-            max-width: 390px;
-            margin: 0 auto;
-            background: #1e1e1e;
-            border: 2px solid #ffcb05;
-            border-radius: 8px;
-            padding: 4px;
-            box-sizing: border-box;
-        }
-        p { margin: 2px 0; font-size: 10px; }
-        .bar-bg { width: 100%; background: #444; height: 6px; border-radius: 4px; overflow: hidden; margin: 2px 0; }
-        .bar-fill { height: 100%; background: #3b4cca; width: 0%; transition: width 0.3s; }
-        .hp-fill { background: #28a745; }
-        
-        #game-arena { 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 2px solid #ffcb05; 
-            border-radius: 6px; 
-            margin: 2px auto;
-            width: 360px;
-            height: 130px;
-            background: linear-gradient(to bottom, #2b580c, #488c14);
-            box-sizing: border-box;
-            padding: 10px;
-            transition: background 0.5s ease;
-        }
-
-        .battle-card {
-            background: rgba(0,0,0,0.7);
-            border: 1px solid #ffcb05;
-            border-radius: 6px;
-            padding: 6px;
-            width: 46%;
-            font-size: 9px;
-            text-align: center;
-        }
-        .battle-card img { width: 45px; height: 45px; display: block; margin: 0 auto; }
-
-        .team-bar {
-            display: flex;
-            justify-content: space-around;
-            background: #2a2a2a;
-            border-radius: 6px;
-            padding: 2px;
-            margin: 2px 0;
-        }
-        .poke-slot {
-            width: 31%;
-            background: #333;
-            border: 1px solid #555;
-            border-radius: 5px;
-            padding: 2px;
-            cursor: pointer;
-            font-size: 9px;
-        }
-        .poke-slot.active { border-color: #ffcb05; background: #443c15; }
-        .poke-slot img { width: 30px; height: 30px; display: block; margin: 0 auto; }
-
-        .dpad-container {
-            margin-top: 2px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .dpad-row { display: flex; }
-        .dpad-btn, .action-btn, .menu-btn {
-            background: #e3350d;
-            color: white;
-            font-weight: bold;
-            border: 2px solid #ffcb05;
-            border-radius: 6px;
-            cursor: pointer;
-            user-select: none;
-        }
-        .dpad-btn { width: 34px; height: 34px; font-size: 12px; margin: 1px; }
-        .action-btn { width: 31%; padding: 4px; margin-top: 2px; font-size: 9px; display: inline-block; }
-        .menu-btn { width: 23%; padding: 4px; margin: 1px; font-size: 8px; background: #3b4cca; display: inline-block; }
-        .btn-green { background: #28a745; }
-        .btn-blue { background: #3b4cca; }
-        .btn-orange { background: #d97706; }
-        .btn-purple { background: #8a2be2; }
-        .btn-shop { background: #d97706; }
-        .btn-trade { background: #9c27b0; }
-
-        .modal-window {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 330px;
-            max-height: 82vh;
-            background: #1a1a1a;
-            border: 3px solid #ffcb05;
-            border-radius: 8px;
-            padding: 8px;
-            z-index: 9999;
-            box-shadow: 0 0 15px rgba(0,0,0,0.9);
-            text-align: left;
-            overflow-y: auto;
-            font-size: 10px;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ffcb05;
-            padding-bottom: 3px;
-            margin-bottom: 4px;
-            color: #ffcb05;
-            font-weight: bold;
-        }
-        .close-btn { background: #e3350d; color: #fff; border: none; border-radius: 4px; cursor: pointer; padding: 2px 5px; }
-
-        .box-section {
-            background: #2a2a2a;
-            border: 1px solid #ffcb05;
-            border-radius: 6px;
-            padding: 3px;
-            margin-top: 2px;
-            font-size: 9px;
-            text-align: left;
-        }
-        .shop-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #222;
-            padding: 3px;
-            margin: 2px 0;
-            border-radius: 4px;
-            border: 1px solid #444;
-        }
-        .buy-action-btn { padding: 2px 5px; font-size: 8px; background: #ffcb05; color: #000; font-weight: bold; border: none; border-radius: 3px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-    <div class="game-panel" id="main-game-panel">
-        <h1>PokeTibia MMO - <span style="color:#ffcb05;">👑 chuodz [ADMIN]</span></h1>
-        <p>🔴 Balls: <b id="pokeballs">10</b> | 💰 $<span id="coins">5000</span> | 🟢 Online: <span id="online-players">1</span> | <span id="depot-status" style="color:#28a745;">Zona: Ruta 1 (Lv.1+)</span></p>
-
-        <!-- EQUIPO ACTIVO -->
-        <div id="team-container" class="team-bar"></div>
-        
-        <!-- ARENA DE COMBATE -->
-        <div id="game-arena">
-            <div class="battle-card" id="enemy-card">
-                <img id="e-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png">
-                <b><span id="e-name">Bulbasaur</span></b> [Lv.<span id="e-lvl">1</span>]<br>
-                <span id="e-rarity" style="color:#ffcb05; font-size:8px;">[Común]</span>
-                <div class="bar-bg"><div class="bar-fill hp-fill" id="e-hp-bar" style="width: 100%;"></div></div>
-                <span id="e-hp-text">60/60 HP</span>
-            </div>
-            
-            <div class="battle-card" id="player-battle-card">
-                <img id="p-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png">
-                <b><span id="p-name">Pikachu</span></b> [Lv.<span id="p-lvl">50</span>]<br>
-                <span id="p-rarity-txt" style="color:#aa44ff; font-size:8px;">[Místico]</span>
-                <div class="bar-bg"><div class="bar-fill hp-fill" id="p-hp-bar" style="width: 100%;"></div></div>
-                <span id="p-hp-text">800/800 HP</span>
-            </div>
-        </div>
-
-        <p id="battle-log">¡Combate MMO táctico activo!</p>
-        
-        <!-- BARRA DE ACCIONES -->
-        <div>
-            <button class="action-btn btn-green" onclick="castSpell('fast')">⚡ Ataque Rápido</button>
-            <button class="action-btn btn-orange" onclick="castSpell('heavy')">🔥 Rayo Fuerte</button>
-            <button class="action-btn btn-blue" onclick="tryCatch()">🔴 Pokéball</button>
-        </div>
-        <button class="action-btn btn-blue" style="width:100%; margin-top:2px;" onclick="changeRoute()">🗺️ Cambiar de Ruta (+10 Lvls, Máx 1000)</button>
-        <button class="action-btn btn-purple" style="width:100%; margin-top:2px;" onclick="triggerUltraBoss()">🌌 Invocación: Jefe Ultra Necrozma</button>
-
-        <!-- BOTONES DE MENÚ -->
-        <div style="margin-top:3px;">
-            <button class="menu-btn" onclick="toggleModal('shop-modal')">🛒 Tienda</button>
-            <button class="menu-btn" onclick="toggleModal('pokedex-modal')">📖 Pokédex</button>
-            <button class="menu-btn" onclick="toggleModal('inventory-modal')">🎒 Inventario</button>
-            <button class="menu-btn" onclick="toggleModal('box-modal')">📦 Caja</button>
-        </div>
-        <button class="menu-btn btn-trade" style="width:100%; margin-top:2px;" onclick="toggleModal('trade-modal')">🔄 Intercambio de Recompensas entre Usuarios (@usuario)</button>
-        <button class="menu-btn btn-shop" style="width:100%; margin-top:2px;" onclick="toggleModal('chat-modal')">💬 Chat Global & Privado</button>
-
-        <!-- D-PAD TÁCTIL -->
-        <div class="dpad-container">
-            <button class="dpad-btn" id="btn-up" onclick="moveAction('Arriba')">⬆️</button>
-            <div class="dpad-row">
-                <button class="dpad-btn" id="btn-left" onclick="moveAction('Izquierda')">⬅️</button>
-                <button class="dpad-btn" id="btn-down" onclick="moveAction('Abajo')">⬇️</button>
-                <button class="dpad-btn" id="btn-right" onclick="moveAction('Derecha')">➡️</button>
-            </div>
-        </div>
-
-        <div class="box-section">
-            <b>📜 Misión Activa:</b> <span id="quest-text">Caza Pokémon (0/10)</span>
-        </div>
-    </div>
-
-    <!-- VENTANAS FLOTANTES -->
-    <div id="shop-modal" class="modal-window">
-        <div class="modal-header"><span>🛒 PokéMart (Tienda Oficial)</span><button class="close-btn" onclick="toggleModal('shop-modal')">X</button></div>
-        <div class="shop-item-row"><span>🔴 Pokéball ($10)</span><button class="buy-action-btn" onclick="buyItem('pokeballs', 1, 10)">Comprar</button></div>
-        <div class="shop-item-row"><span>🔵 Great Ball ($25)</span><button class="buy-action-btn" onclick="buyItem('greatballs', 1, 25)">Comprar</button></div>
-        <div class="shop-item-row"><span>🟣 Ultra Ball ($50)</span><button class="buy-action-btn" onclick="buyItem('ultraballs', 1, 50)">Comprar</button></div>
-        <div class="shop-item-row"><span>🟡 Master Ball ($500)</span><button class="buy-action-btn" onclick="buyItem('masterballs', 1, 500)">Comprar</button></div>
-        <div class="shop-item-row"><span>🧪 Poción de HP ($15)</span><button class="buy-action-btn" onclick="buyItem('potions', 1, 15)">Comprar</button></div>
-        <div class="shop-item-row"><span>🧪 Super Poción ($30)</span><button class="buy-action-btn" onclick="buyItem('superpotions', 1, 30)">Comprar</button></div>
-        <div class="shop-item-row"><span>✨ Revivir Pokémon ($50)</span><button class="buy-action-btn" onclick="buyItem('revives', 1, 50)">Comprar</button></div>
-        <div class="shop-item-row"><span>💖 Elixir Curación Total ($100)</span><button class="buy-action-btn" onclick="buyItem('elixirs', 1, 100)">Comprar</button></div>
-        <div class="shop-item-row" style="background:#312; border-color:#852;"><span>💰 Vender Loot</span><button class="buy-action-btn" style="background:#28a745; color:#fff;" onclick="sellLoot()">Vender</button></div>
-    </div>
-
-    <div id="pokedex-modal" class="modal-window">
-        <div class="modal-header"><span>📖 Pokédex Nacional & Ultraentes</span><button class="close-btn" onclick="toggleModal('pokedex-modal')">X</button></div>
-        <div id="pokedex-content">Cargando...</div>
-    </div>
-
-    <div id="inventory-modal" class="modal-window">
-        <div class="modal-header"><span>🎒 Inventario & Uso de Ítems</span><button class="close-btn" onclick="toggleModal('inventory-modal')">X</button></div>
-        <div id="inventory-content">Vacío</div>
-    </div>
-
-    <div id="box-modal" class="modal-window">
-        <div class="modal-header"><span>📦 Caja & Gestión de Equipo</span><button class="close-btn" onclick="toggleModal('box-modal')">X</button></div>
-        <div id="box-content">Vacío</div>
-    </div>
-
-    <!-- VENTANA DE INTERCAMBIO DE RECOMPENSAS ENTRE USUARIOS -->
-    <div id="trade-modal" class="modal-window">
-        <div class="modal-header"><span>🔄 Intercambio de Recompensas</span><button class="close-btn" onclick="toggleModal('trade-modal')">X</button></div>
-        <p style="color:#aaa; margin-bottom: 5px;">Envía recompensas o ítems directamente a la cuenta de otro usuario usando su @.</p>
-        <div style="margin-bottom: 5px;">
-            <label style="font-size:9px;">Usuario Destino (@):</label><br>
-            <input type="text" id="trade-user" placeholder="@tu_amigo" style="width: 96%; background: #222; color: #fff; border: 1px solid #555; padding: 3px; font-size: 9px; border-radius: 3px;">
-        </div>
-        <div style="margin-bottom: 5px;">
-            <label style="font-size:9px;">Seleccionar Recompensa / Ítem:</label><br>
-            <select id="trade-item-select" style="width: 98%; background: #222; color: #fff; border: 1px solid #555; padding: 3px; font-size: 9px; border-radius: 3px;">
-                <option value="pokeballs">Pokéballs</option>
-                <option value="masterballs">Master Ball</option>
-                <option value="potions">Poción de HP</option>
-                <option value="coins">PokéDollars ($)</option>
-            </select>
-        </div>
-        <div style="margin-bottom: 8px;">
-            <label style="font-size:9px;">Cantidad:</label><br>
-            <input type="number" id="trade-amount" value="1" min="1" style="width: 96%; background: #222; color: #fff; border: 1px solid #555; padding: 3px; font-size: 9px; border-radius: 3px;">
-        </div>
-        <button onclick="executeTrade()" style="width: 100%; background: #28a745; color: #fff; font-weight: bold; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 9px;">🚀 Enviar Intercambio</button>
-    </div>
-
-    <div id="chat-modal" class="modal-window">
-        <div class="modal-header"><span>💬 Chat Global & Privado MMO</span><button class="close-btn" onclick="toggleModal('chat-modal')">X</button></div>
-        <div style="margin-bottom:3px;">
-            <button onclick="setChatMode('global')" id="btn-global" style="background:#28a745; color:#fff; border:none; padding:2px 5px; border-radius:3px; font-size:8px; cursor:pointer;">🌍 Global</button>
-            <button onclick="setChatMode('private')" id="btn-private" style="background:#444; color:#fff; border:none; padding:2px 5px; border-radius:3px; font-size:8px; cursor:pointer;">🔒 Privado</button>
-        </div>
-        <div id="chat-messages" style="background:#111; border:1px solid #444; height:95px; overflow-y:auto; padding:3px; font-size:9px; margin-bottom:3px; border-radius:4px;">
-            <div style="color:#ffcb05;">[Sistema]: ¡Conectado al servidor MMO!</div>
-        </div>
-        <div id="private-recipient-box" style="display:none; margin-bottom:3px;">
-            <input type="text" id="chat-to-user" placeholder="Usuario destino..." style="width:96%; background:#222; color:#fff; border:1px solid #555; padding:2px; font-size:8px; border-radius:3px;">
-        </div>
-        <div style="display:flex;">
-            <input type="text" id="chat-input" placeholder="Mensaje..." style="flex:1; background:#222; color:#fff; border:1px solid #555; padding:3px; font-size:9px; border-radius:3px;">
-            <button onclick="sendChatMessage()" style="background:#3b4cca; color:#fff; border:none; padding:3px 6px; font-size:9px; cursor:pointer; border-radius:3px; margin-left:3px;">Enviar</button>
-        </div>
-    </div>
-
-    <script>
-        const pokemonNames = {
-            1: "Bulbasaur", 2: "Ivysaur", 3: "Venusaur",
-            4: "Charmander", 5: "Charmeleon", 6: "Charizard",
-            7: "Squirtle", 8: "Wartortle", 9: "Blastoise",
-            16: "Pidgey", 17: "Pidgeotto", 18: "Pidgeot",
-            25: "Pikachu", 26: "Raichu",
-            66: "Machop", 67: "Machoke", 68: "Machamp",
-            92: "Gastly", 93: "Haunter", 94: "Gengar",
-            143: "Snorlax", 150: "Mewtwo", 151: "Mew",
-            793: "Nihilego", 794: "Buzzwole", 795: "Pheromosa", 796: "Xurkitree", 797: "Celesteela",
-            798: "Kartana", 799: "Guzzlord", 800: "Ultra Necrozma"
-        };
-
-        const evolutionLines = {
-            1: { nextId: 2, level: 40 }, 2: { nextId: 3, level: 80 },
-            4: { nextId: 5, level: 40 }, 5: { nextId: 6, level: 80 },
-            7: { nextId: 8, level: 40 }, 8: { nextId: 9, level: 80 },
-            16: { nextId: 17, level: 30 }, 17: { nextId: 18, level: 70 },
-            25: { nextId: 26, level: 40 },
-            66: { nextId: 67, level: 40 }, 67: { nextId: 68, level: 80 },
-            92: { nextId: 93, level: 40 }, 93: { nextId: 94, level: 80 }
-        };
-
-        function getPokeName(id) { return pokemonNames[id] || `Pokémon #${id}`; }
-
-        let currentAccount = "chuodz";
-        let isAdmin = true;
-        let chatMode = 'global';
-        let playerData = {
-            coins: 5000, pokeballs: 10, greatballs: 5, ultraballs: 5, masterballs: 2,
-            potions: 5, superpotions: 5, revives: 5, elixirs: 3,
-            routeLevel: 1, inventory: { "Pepita de Oro": 2 },
-            team: [
-                { id: 25, name: "Pikachu", level: 50, exp: 0, maxExp: 500, hp: 800, maxHp: 800, atk: 250, rarity: "Místico", shiny: false }
-            ],
-            activePokeIndex: 0, pokedex: { 25: {seen: 15, caught: 3} }, box: [], questCount: 0
-        };
-
-        let activeEnemy = null;
-
-        window.onload = function() {
-            spawnEnemy();
-            updateUI();
-        };
-
-        function spawnEnemy() {
-            let rRoll = Math.random();
-            let arena = document.getElementById('game-arena');
-            arena.style.background = 'linear-gradient(to bottom, #2b580c, #488c14)';
-
-            if (playerData.routeLevel >= 30 && rRoll < 0.08) {
-                let ultraIds = [793, 794, 795, 796, 797, 798, 799];
-                let randUltra = ultraIds[Math.floor(Math.random() * ultraIds.length)];
-                let level = Math.min(1000, playerData.routeLevel + 20);
-                let hp = level * 120;
-
-                activeEnemy = {
-                    id: randUltra, name: getPokeName(randUltra), level: level,
-                    hp: hp, currentHp: hp, maxHp: hp, atk: level * 30,
-                    rarity: "Ultraente", shiny: false
-                };
-                arena.style.background = 'linear-gradient(to bottom, #4a00e0, #8e2de2)';
-                document.getElementById('battle-log').innerText = `🌌 ¡Un Ultraumbral se abrió! ¡Apareció el Ultraente ${activeEnemy.name} (Lv.${level})!`;
-            } else {
-                let baseIds = [1, 4, 7, 16, 25, 66, 92, 143, 150, 151];
-                let randId = baseIds[Math.floor(Math.random() * baseIds.length)];
-                
-                let rarity = "Común";
-                if (rRoll < 0.02) rarity = "Shiny";
-                else if (rRoll < 0.10) rarity = "Legendario";
-                else if (rRoll < 0.30) rarity = "Místico";
-
-                let level = Math.min(1000, playerData.routeLevel + Math.floor(Math.random() * 9));
-                let hp = level * 60;
-                
-                activeEnemy = {
-                    id: randId, name: getPokeName(randId), level: level,
-                    hp: hp, currentHp: hp, maxHp: hp, atk: level * 15,
-                    rarity: rarity, shiny: (rarity === "Shiny")
-                };
-                document.getElementById('battle-log').innerText = `⚔️ ¡Apareció un ${activeEnemy.name} [${rarity}] (Lv.${level})!`;
-            }
-
-            if (!playerData.pokedex[activeEnemy.id]) playerData.pokedex[activeEnemy.id] = { seen: 0, caught: 0 };
-            playerData.pokedex[activeEnemy.id].seen++;
-
-            updateUI();
-        }
-
-        function triggerUltraBoss() {
-            let arena = document.getElementById('game-arena');
-            arena.style.background = 'linear-gradient(to bottom, #000000, #434343)';
-            
-            let bossLevel = Math.max(100, playerData.routeLevel + 50);
-            let bossHp = bossLevel * 300;
-
-            activeEnemy = {
-                id: 800, name: "Ultra Necrozma", level: bossLevel,
-                hp: bossHp, currentHp: bossHp, maxHp: bossHp, atk: bossLevel * 50,
-                rarity: "Jefe Ultra", shiny: true
-            };
-
-            if (!playerData.pokedex[800]) playerData.pokedex[800] = { seen: 0, caught: 0 };
-            playerData.pokedex[800].seen++;
-
-            document.getElementById('battle-log').innerText = `⚠️ ¡ADVERTENCIA DE JEFE! ¡El devorador de luz Ultra Necrozma ha bajado a combatir!`;
-            updateUI();
-        }
-
-        function moveAction(dir) {
-            document.getElementById('battle-log').innerText = `🚶‍♂️ Te moviste hacia ${dir} por la Ruta ${playerData.routeLevel}.`;
-        }
-
-        function castSpell(type) {
-            let activePoke = playerData.team[playerData.activePokeIndex];
-            if (activePoke.hp <= 0) { alert("¡Tu Pokémon activo está debilitado! Usa un Revivir."); return; }
-
-            let dmg = isAdmin ? (type === 'heavy' ? activePoke.atk * 2 : activePoke.atk) : (type === 'heavy' ? activePoke.atk * 1.3 : activePoke.atk * 0.8);
-            
-            activeEnemy.currentHp = Math.max(0, activeEnemy.currentHp - dmg);
-
-            if (activeEnemy.currentHp <= 0) {
-                let reward = activeEnemy.rarity === "Jefe Ultra" ? 25000 : (activeEnemy.rarity === "Ultraente" ? 8000 : (activeEnemy.shiny ? 5000 : (activeEnemy.rarity === "Legendario" ? 2000 : 300)));
-                playerData.coins += reward;
-                
-                activePoke.exp += 250;
-                if (activePoke.exp >= activePoke.maxExp && activePoke.level < 1000) {
-                    activePoke.exp = 0;
-                    activePoke.level++;
-                    activePoke.maxHp += 50;
-                    activePoke.hp = activePoke.maxHp;
-                    activePoke.atk += 20;
-                    
-                    let evo = evolutionLines[activePoke.id];
-                    if (evo && activePoke.level >= evo.level) {
-                        let oldName = activePoke.name;
-                        activePoke.id = evo.nextId;
-                        activePoke.name = getPokeName(evo.nextId);
-                        alert(`✨ ¡Increíble! Tu ${oldName} ha evolucionado en **${activePoke.name}** al Nivel ${activePoke.level}!`);
-                    } else {
-                        alert(`🎉 ¡Tu ${activePoke.name} subió al Nivel ${activePoke.level}!`);
-                    }
-                }
-
-                alert(`💥 ¡Derrotaste a ${activeEnemy.name} [${activeEnemy.rarity}]! Recompensa: +$${reward} PokéDollars`);
-                spawnEnemy();
-            } else {
-                let eDmg = Math.floor(activeEnemy.atk * 0.15);
-                activePoke.hp = Math.max(0, activePoke.hp - eDmg);
-            }
-            updateUI();
-        }
-
-        function tryCatch() {
-            let ball = "Pokéball";
-            if (playerData.masterballs > 0) { playerData.masterballs--; ball = "Master Ball"; }
-            else if (playerData.ultraballs > 0) { playerData.ultraballs--; ball = "Ultra Ball"; }
-            else if (playerData.greatballs > 0) { playerData.greatballs--; ball = "Great Ball"; }
-            else if (playerData.pokeballs > 0) { playerData.pokeballs--; ball = "Pokéball"; }
-            else { alert("¡No tienes Pokéballs!"); return; }
-
-            let chance = activeEnemy.rarity === "Jefe Ultra" ? 0.02 : (activeEnemy.rarity === "Ultraente" ? 0.10 : (activeEnemy.shiny ? 0.05 : (activeEnemy.rarity === "Legendario" ? 0.20 : 0.60)));
-            if (ball === "Master Ball" || isAdmin || Math.random() < chance) {
-                alert(`🎉 ¡Atrapaste a ${activeEnemy.name} (${activeEnemy.rarity}) usando ${ball}!`);
-                
-                if(!playerData.pokedex[activeEnemy.id]) playerData.pokedex[activeEnemy.id] = { seen: 1, caught: 0 };
-                playerData.pokedex[activeEnemy.id].caught++;
-
-                let newPoke = {
-                    id: activeEnemy.id, name: activeEnemy.name, level: activeEnemy.level,
-                    exp: 0, maxExp: activeEnemy.level * 100, hp: activeEnemy.maxHp,
-                    maxHp: activeEnemy.maxHp, atk: activeEnemy.atk, rarity: activeEnemy.rarity, shiny: activeEnemy.shiny
-                };
-
-                if (playerData.team.length < 3) playerData.team.push(newPoke);
-                else playerData.box.push(newPoke);
-
-                spawnEnemy();
-            } else {
-                alert(`❌ ¡${activeEnemy.name} (${activeEnemy.rarity}) se liberó de la ${ball}!`);
-            }
-            updateUI();
-        }
-
-        function executeTrade() {
-            let user = document.getElementById('trade-user').value.trim();
-            let itemKey = document.getElementById('trade-item-select').value;
-            let qty = parseInt(document.getElementById('trade-amount').value) || 1;
-
-            if(!user.startsWith('@')) {
-                alert("El nombre de usuario debe empezar con '@' (Ej: @amigo)");
-                return;
-            }
-
-            if(playerData[itemKey] < qty) {
-                alert("No tienes suficientes unidades de este recurso/ítem para enviar.");
-                return;
-            }
-
-            playerData[itemKey] -= qty;
-            updateUI();
-            toggleModal('trade-modal');
-            alert(`🔄 ¡Intercambio exitoso! Enviaste ${qty}x de [${itemKey}] al usuario ${user}.`);
-        }
-
-        function useInventoryItem(itemKey) {
-            let activePoke = playerData.team[playerData.activePokeIndex];
-            if (itemKey === 'potions') {
-                if (playerData.potions <= 0) { alert("No tienes Pociones."); return; }
-                playerData.potions--;
-                activePoke.hp = Math.min(activePoke.maxHp, activePoke.hp + 100);
-            } else if (itemKey === 'superpotions') {
-                if (playerData.superpotions <= 0) { alert("No tienes Super Pociones."); return; }
-                playerData.superpotions--;
-                activePoke.hp = Math.min(activePoke.maxHp, activePoke.hp + 300);
-            } else if (itemKey === 'revives') {
-                if (playerData.revives <= 0) { alert("No tienes Revivires."); return; }
-                if (activePoke.hp > 0) { alert("Este Pokémon no está debilitado."); return; }
-                playerData.revives--;
-                activePoke.hp = Math.floor(activePoke.maxHp * 0.5);
-            } else if (itemKey === 'elixirs') {
-                if (playerData.elixirs <= 0) { alert("No tienes Elixires."); return; }
-                playerData.elixirs--;
-                activePoke.hp = activePoke.maxHp;
-            }
-            updateUI();
-            alert(`✨ ¡Ítem usado con éxito en ${activePoke.name}!`);
-        }
-
-        function swapBoxWithTeam(boxIndex, teamIndex) {
-            let boxPoke = playerData.box[boxIndex];
-            let teamPoke = playerData.team[teamIndex];
-
-            playerData.team[teamIndex] = boxPoke;
-            playerData.box[boxIndex] = teamPoke;
-
-            updateUI();
-            alert(`🔄 ¡Intercambio exitoso entre equipo y caja!`);
-        }
-
-        function sellBoxPokemon(index) {
-            let p = playerData.box[index];
-            let prices = { "Común": 100, "Místico": 500, "Legendario": 2500, "Ultraente": 5000, "Jefe Ultra": 15000, "Shiny": 10000 };
-            let val = prices[p.rarity] || 100;
-            if (p.shiny) val = 10000;
-
-            playerData.coins += val;
-            playerData.box.splice(index, 1);
-            updateUI();
-            alert(`💰 Vendiste a ${p.name} [${p.rarity}] por $${val} PokéDollars.`);
-        }
-
-        function changeRoute() {
-            playerData.routeLevel = Math.min(991, playerData.routeLevel + 10);
-            document.getElementById('depot-status').innerText = `Zona: Ruta ${playerData.routeLevel} (Lv.${playerData.routeLevel}+)`;
-            spawnEnemy();
-            alert(`🗺️ ¡Viajando a Ruta ${playerData.routeLevel}!`);
-        }
-
-        function buyItem(k, q, p) {
-            let cost = p * q;
-            if (isAdmin || playerData.coins >= cost) {
-                if (!isAdmin) playerData.coins -= cost;
-                playerData[k] += q;
-                updateUI();
-                alert(`🛒 ¡Compra de ${k} exitosa!`);
-            } else { alert("¡Faltan PokéDollars!"); }
-        }
-
-        function sellLoot() {
-            playerData.coins += 1000;
-            updateUI();
-            alert("💰 ¡Loot vendido por $1000!");
-        }
-
-        function toggleModal(id) {
-            let m = document.getElementById(id);
-            if (!m) return;
-            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function setChatMode(mode) {
-            chatMode = mode;
-            let btnG = document.getElementById('btn-global');
-            let btnP = document.getElementById('btn-private');
-            let privBox = document.getElementById('private-recipient-box');
-            if (mode === 'global') {
-                btnG.style.background = '#28a745'; btnP.style.background = '#444'; privBox.style.display = 'none';
-            } else {
-                btnP.style.background = '#28a745'; btnG.style.background = '#444'; privBox.style.display = 'block';
-            }
-        }
-
-        function selectPoke(idx) {
-            playerData.activePokeIndex = idx;
-            updateUI();
-        }
-
-        function sendChatMessage() {
-            let input = document.getElementById('chat-input');
-            let text = input.value.trim();
-            if(!text) return;
-            let box = document.getElementById('chat-messages');
-            let time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-            if (chatMode === 'global') {
-                box.innerHTML += `<div style="color:#00ffcc;">[${time}] [Global] 👑 chuodz: ${text}</div>`;
-            } else {
-                let to = document.getElementById('chat-to-user').value.trim() || 'Entrenador';
-                box.innerHTML += `<div style="color:#ff77ff;">[${time}] [Privado a ${to}]: ${text}</div>`;
-            }
-            input.value = '';
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function updateUI() {
-            document.getElementById('coins').innerText = playerData.coins;
-            document.getElementById('pokeballs').innerText = playerData.pokeballs + playerData.greatballs + playerData.ultraballs + playerData.masterballs;
-            
-            if (activeEnemy) {
-                document.getElementById('e-name').innerText = activeEnemy.name;
-                document.getElementById('e-lvl').innerText = activeEnemy.level;
-                document.getElementById('e-rarity').innerText = `[${activeEnemy.rarity}]`;
-                document.getElementById('e-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${activeEnemy.id}.png`;
-                let ePct = Math.max(0, (activeEnemy.currentHp / activeEnemy.maxHp) * 100);
-                document.getElementById('e-hp-bar').style.width = ePct + '%';
-                document.getElementById('e-hp-text').innerText = `${activeEnemy.currentHp}/${activeEnemy.maxHp} HP`;
-            }
-
-            let activePoke = playerData.team[playerData.activePokeIndex];
-            if (activePoke) {
-                document.getElementById('p-name').innerText = activePoke.name;
-                document.getElementById('p-lvl').innerText = activePoke.level;
-                document.getElementById('p-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${activePoke.id}.png`;
-                document.getElementById('p-rarity-txt').innerText = `[${activePoke.rarity}]`;
-                let pPct = Math.max(0, (activePoke.hp / activePoke.maxHp) * 100);
-                document.getElementById('p-hp-bar').style.width = pPct + '%';
-                document.getElementById('p-hp-text').innerText = `${activePoke.hp}/${activePoke.maxHp} HP`;
-            }
-
-            let html = "";
-            playerData.team.forEach((p, i) => {
-                let act = i === playerData.activePokeIndex ? "active" : "";
-                let pct = (p.hp / p.maxHp) * 100;
-                let cardColor = p.shiny ? "#ffd700" : (p.rarity === "Jefe Ultra" ? "#00ffff" : (p.rarity === "Ultraente" ? "#8a2be2" : (p.rarity === "Legendario" ? "#ff4444" : (p.rarity === "Místico" ? "#aa44ff" : "#ffffff"))));
-                html += `<div class="poke-slot ${act}" onclick="selectPoke(${i})" style="border-color:${cardColor};">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png">
-                    <b style="color:${cardColor}">${p.name}</b> (Lv.${p.level})<br>
-                    <div class="bar-bg"><div class="bar-fill hp-fill" style="width:${pct}%"></div></div>
-                    ${p.hp}/${p.maxHp} HP
-                </div>`;
-            });
-            document.getElementById('team-container').innerHTML = html;
-
-            let pDexHTML = "<b>📖 Registro Pokédex Nacional & Ultraentes:</b><br>";
-            for (let id in pokemonNames) {
-                let data = playerData.pokedex[id] || { seen: 0, caught: 0 };
-                pDexHTML += `<div style="margin:3px 0; background:#252525; padding:3px; border-radius:3px;">` +
-                            `<b>#${id} ${pokemonNames[id]}</b> | Vistos: ${data.seen} | Atrapados: ${data.caught}<br>` +
-                            `<span style="color:#ffcb05; font-size:8px;">Registro de Especies Registradas</span></div>`;
-            }
-            document.getElementById('pokedex-content').innerHTML = pDexHTML;
-
-            let invHTML = `<b>🔴 Pokéball:</b> ${playerData.pokeballs} | <b>Great:</b> ${playerData.greatballs}<br>` +
-                          `<b>🟣 Ultra:</b> ${playerData.ultraballs} | <b>🟡 Master:</b> ${playerData.masterballs}<br><hr style="border-color:#444;">` +
-                          `<b>🧪 Poción (+100 HP):</b> ${playerData.potions} <button onclick="useInventoryItem('potions')" style="background:#28a745; color:#fff; border:none; padding:1px 4px; border-radius:3px; cursor:pointer; font-size:8px;">Usar</button><br>` +
-                          `<b>🧪 Super Poción (+300 HP):</b> ${playerData.superpotions} <button onclick="useInventoryItem('superpotions')" style="background:#28a745; color:#fff; border:none; padding:1px 4px; border-radius:3px; cursor:pointer; font-size:8px;">Usar</button><br>` +
-                          `<b>✨ Revivir:</b> ${playerData.revives} <button onclick="useInventoryItem('revives')" style="background:#d97706; color:#fff; border:none; padding:1px 4px; border-radius:3px; cursor:pointer; font-size:8px;">Usar</button><br>` +
-                          `<b>💖 Elixir (Full HP):</b> ${playerData.elixirs} <button onclick="useInventoryItem('elixirs')" style="background:#3b4cca; color:#fff; border:none; padding:1px 4px; border-radius:3px; cursor:pointer; font-size:8px;">Usar</button>`;
-            document.getElementById('inventory-content').innerHTML = invHTML;
-
-            let boxHTML = "<b>📦 Caja (Intercambiar con Equipo o Vender):</b><br>";
-            if (playerData.box.length > 0) {
-                playerData.box.forEach((bPoke, bIdx) => {
-                    let price = bPoke.shiny ? 10000 : (bPoke.rarity === "Jefe Ultra" ? 15000 : (bPoke.rarity === "Ultraente" ? 5000 : (bPoke.rarity === "Legendario" ? 2500 : (bPoke.rarity === "Místico" ? 500 : 100))));
-                    boxHTML += `<div style="margin:3px 0; background:#333; padding:4px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">` +
-                               `<span><b>${bPoke.name}</b> [${bPoke.rarity}] (Lv.${bPoke.level})</span>` +
-                               `<div>` +
-                               `<button onclick="swapBoxWithTeam(${bIdx}, 0)" style="background:#3b4cca; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:7px; margin-right:2px;">🔄 #1</button>` +
-                               `<button onclick="swapBoxWithTeam(${bIdx}, 1)" style="background:#3b4cca; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:7px; margin-right:2px;">🔄 #2</button>` +
-                               `<button onclick="swapBoxWithTeam(${bIdx}, 2)" style="background:#3b4cca; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:7px; margin-right:2px;">🔄 #3</button>` +
-                               `<button onclick="sellBoxPokemon(${bIdx})" style="background:#d97706; color:#fff; border:none; padding:2px 4px; border-radius:3px; cursor:pointer; font-size:7px;">💰 Vender ($${price})</button>` +
-                               `</div></div>`;
-                });
-            } else {
-                boxHTML += "<i>La caja está vacía. ¡Atrapa más Pokémon!</i>";
-            }
-            document.getElementById('box-content').innerHTML = boxHTML;
-        }
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#101820" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Survivors" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>Pokémon Survivors – Jogo grátis estilo Vampire Survivors com Pokémon</title>
+    <meta name="description" content="Jogue grátis no navegador ou no celular, sem baixar nada: um roguelite estilo Vampire Survivors com Pokémon. Escolha entre 27 iniciais de todas as regiões (e mais 63 Pokémon que saem de ovos), evolua, derrote Mewtwo e capture os lendários para jogar com eles. Jogue sozinho ou em co-op online com até 3 amigos. E tem a Arena, um MOBA 4v4 e 3v3 estilo Pokémon Unite, contra bots ou com amigos." />
+    <link rel="canonical" href="https://www.pokemonsurvivors.com/" />
+    <link rel="alternate" hreflang="pt-BR" href="https://www.pokemonsurvivors.com/" />
+    <link rel="alternate" hreflang="en" href="https://www.pokemonsurvivors.com/en/" />
+    <link rel="alternate" hreflang="es" href="https://www.pokemonsurvivors.com/es/" />
+    <link rel="alternate" hreflang="fr" href="https://www.pokemonsurvivors.com/fr/" />
+    <link rel="alternate" hreflang="zh-Hant" href="https://www.pokemonsurvivors.com/zh-tw/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.pokemonsurvivors.com/en/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Pokémon Survivors" />
+    <meta property="og:url" content="https://www.pokemonsurvivors.com/" />
+    <meta property="og:title" content="Pokémon Survivors – Vampire Survivors com Pokémon, grátis" />
+    <meta property="og:description" content="Fan game gratuito estilo Vampire Survivors com Pokémon. Jogue no navegador ou no celular, sem baixar." />
+    <meta property="og:image" content="https://www.pokemonsurvivors.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Charizard enfrentando uma horda de Pokémon selvagens em pixel art" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="es_LA" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="zh_TW" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/assets/pokemon/4/portrait.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://www.pokemonsurvivors.com/#website",
+            "name": "Pokémon Survivors",
+            "url": "https://www.pokemonsurvivors.com/",
+            "inLanguage": ["pt-BR", "en", "es", "fr", "zh-Hant"]
+          },
+          {
+            "@type": "VideoGame",
+            "@id": "https://www.pokemonsurvivors.com/#game",
+            "name": "Pokémon Survivors",
+            "alternateName": ["Pokemon Survivors", "Vampire Survivors com Pokémon"],
+            "url": "https://www.pokemonsurvivors.com/",
+            "description": "Fan game gratuito e não oficial estilo Vampire Survivors com Pokémon. Escolha um dos 27 iniciais ou choque ovos para liberar mais 63 Pokémon, sobreviva 15 minutos de hordas selvagens de todas as gerações, monte sua build entre 207 golpes, evolua e derrote Mewtwo. Vença os lendários para capturá-los e jogar com eles no Modo Lendário. Roda no navegador e no celular, sem download. Jogue sozinho ou em co-op online com até 3 amigos.",
+            "disambiguatingDescription": "Não confundir com PokéSurvivor (pokesurvivor.com), outro fan game de Pokémon estilo Vampire Survivors, feito por JPTER78, nem com Pokémon Survivor Burst, feito por ClessioTV para baixar no PC.",
+            "image": "https://www.pokemonsurvivors.com/og.png",
+            "genre": ["Roguelite", "Roguelike", "Bullet heaven", "Survivors-like", "Ação"],
+            "gamePlatform": ["Navegador", "Android", "iOS", "PC"],
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Qualquer (navegador)",
+            "playMode": ["SinglePlayer", "CoOp", "MultiPlayer"],
+            "numberOfPlayers": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 4 },
+            "inLanguage": ["pt-BR", "en", "es", "fr", "zh-Hant"],
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+            "author": { "@type": "Person", "name": "Pedro Barretto", "url": "https://pedrobarretto.com.br" },
+            "sameAs": ["https://github.com/pedrobarretto/pokemon-survivors", "https://discord.gg/Vx3RWFsjaD", "https://www.tiktok.com/@pokemonsurvivors", "https://www.youtube.com/@PokemonSurvivors", "https://www.instagram.com/pokemonsurvivors/"],
+            "isPartOf": { "@id": "https://www.pokemonsurvivors.com/#website" }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Pokémon Survivors é o mesmo jogo que o PokéSurvivor?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Não. Pokémon Survivors (pokemonsurvivors.com) e PokéSurvivor (pokesurvivor.com) são dois fan games diferentes, de autores diferentes, com nomes quase iguais. Pokémon Survivors é feito por Pedro Barretto; PokéSurvivor, por JPTER78." }
+              },
+              {
+                "@type": "Question",
+                "name": "Pokémon Survivors é grátis?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Sim. É um fan game gratuito, sem anúncios e sem compras. O código é aberto no GitHub." }
+              },
+              {
+                "@type": "Question",
+                "name": "Precisa baixar alguma coisa?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Não. O jogo roda direto no navegador, no PC ou no celular. No celular dá para instalar como app em tela cheia pelo menu do navegador." }
+              },
+              {
+                "@type": "Question",
+                "name": "Como funciona o jogo?",
+                "acceptedAnswer": { "@type": "Answer", "text": "É um roguelite estilo Vampire Survivors: você só se move, e seu Pokémon ataca sozinho. Sobreviva 15 minutos de hordas, ganhe experiência, escolha golpes e itens a cada nível, evolua e enfrente chefes lendários até Mewtwo. No caminho, fendas épicas levam ao domínio de Lugia, Kyogre, Rayquaza e outros lendários, e depois de Mewtwo dá para seguir no modo sem fim contra Arceus." }
+              },
+              {
+                "@type": "Question",
+                "name": "Dá para jogar com Pokémon lendários?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Sim, no Modo Lendário. Os 23 lendários do jogo (Kyogre, Groudon, Rayquaza, Lugia, Mewtwo, Arceus e outros) são capturados vencendo-os como chefes: 3 vitórias para os das fendas e dos trios, 5 para Mewtwo e 1 para Mew, Celebi e Jirachi. Arceus só se deixa capturar no modo sem fim, depois dos outros 22. No Modo Lendário eles despertam no Nv 12 e 28 (Primal Kyogre, Primal Groudon, Mega Rayquaza), a horda vem mais forte e há um ranking só deles. Na Noite das Bruxas de 2026 (24/10 a 2/11), o Darkrai chega como lenda de evento: a fenda do Pesadelo aparece nas partidas assombradas, e 2 vitórias o capturam para jogar com o Dark Void e a inata Bad Dreams; e, se a comunidade juntar 15 milhões de doces durante o evento, ele ganha a Mega Evolução para todos e desperta como Mega Darkrai no Nv 28. Quem o capturou fica com ele depois do evento." }
+              },
+              {
+                "@type": "Question",
+                "name": "Dá para jogar com amigos?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Sim. O co-op online junta até 4 treinadores na mesma partida, cada um com o seu Pokémon: crie uma sala e chame os amigos pelo link, pelo código ou pela lista de amigos. A EXP é da equipe, o ₽ é dividido entre todos e quem desmaia pode ser reanimado por um colega. É preciso uma conta com @nome. Por enquanto o co-op é o modo normal: Modo Lendário, lugares, itens da loja, eventos e ranking ficam nas partidas solo." }
+              },
+              {
+                "@type": "Question",
+                "name": "Tem um modo MOBA parecido com Pokémon Unite?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Sim, a Arena: um MOBA 4v4 de 7 minutos no Vale ou na Enseada (uma praia de rotas curvas e uma ilha no centro, ligada por píeres), com duas rotas e a selva no meio, ou uma partida 3v3 rápida de 3 minutos na Clareira ou no Recife (um canal corta o mapa, cruzado por pontes estreitas), mapas compactos com dois gols por time; cada partida sorteia o mapa, e numa sala com amigos o anfitrião escolhe. Derrote Pokémon selvagens para juntar Energia (até 30), leve-a até um gol do time rival e fique lá dentro para marcar; um golpe de um rival interrompe. No 4v4, cada time tem três gols, e o da base só abre quando cai um gol de rota. Na reta final (os 2 últimos minutos no 4v4, o último no 3v3) os pontos valem em dobro e o Zapdos pousa no centro. Os controles são os do Unite: o ataque básico sai sozinho, e o Golpe 1, o Golpe 2 e o Golpe Unite você lança e mira (Q, E e R, ou os botões na tela, com mira assistida), travando o alvo com um clique ou um toque. O time combina por chat rápido com frases prontas e marcações no mapa, vê o placar completo (abates, assistências, dano e cura) e pode votar pela rendição a partir da metade da partida. Jogue com os 27 iniciais, cada um com seu papel (Atacante, Velocista, Equilibrado, Defensor ou Suporte), contra bots na hora, sem conta, ou numa sala com amigos, escolhendo Azul ou Vermelho; os lugares vazios ficam com bots. Com conta, entre na fila pública, Casual ou Ranqueada: a Ranqueada tem temporadas de duas semanas, tiers de Poké Ball a Master Ball, ranking da temporada e um título no fim (a temporada 1 começa em 2 de novembro); o 3v3 é só Casual. Sair no meio ou ficar parado custa Fair Play, e a Ranqueada pede Fair Play 80 ou mais. No lobby, a Arena fica no Estádio, ao sul da sua casa, com o Ninjask de juiz." }
+              },
+              {
+                "@type": "Question",
+                "name": "É um jogo oficial da Pokémon?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Não. É um fan game não oficial e sem fins lucrativos, sem ligação com Nintendo, The Pokémon Company, GAME FREAK ou Creatures." }
+              }
+            ]
+          }
+        ]
+      }
     </script>
-</body>
-</html>
+  </head>
+  <body>
+    <canvas id="game" aria-label="Pokémon Survivors"></canvas>
+    <div id="ui"></div>
+    <!-- Text alternative to the canvas: read by screen readers, search engines and AI crawlers that don't run JS. -->
+    <main class="sr-only">
+      <h1>Pokémon Survivors: jogo grátis estilo Vampire Survivors com Pokémon</h1>
+      <p>
+        Pokémon Survivors é um fan game gratuito e não oficial que mistura Pokémon com Vampire Survivors. É um roguelite
+        de ação (bullet heaven) que roda no navegador e no celular, sem download e sem cadastro.
+      </p>
+      <p>Pokémon Survivors (pokemonsurvivors.com) não é o PokéSurvivor (pokesurvivor.com): são dois fan games diferentes, de autores diferentes, com nomes quase iguais. <a href="/pokemon-survivors-vs-pokesurvivor/">Veja as diferenças</a>.</p>
+      <h2>Como jogar</h2>
+      <p>
+        Escolha seu Pokémon inicial, ande pelo mapa e deixe ele atacar sozinho. Sobreviva 15 minutos de hordas de
+        Pokémon selvagens, colete experiência, aprenda golpes, equipe itens e evolua no meio da partida. No fim, enfrente
+        Mewtwo. Depois, continue no modo sem fim até Arceus vir caçar você. Vença os lendários como chefes para capturá-los
+        e jogue com eles no Modo Lendário.
+        Ou crie uma sala e jogue em co-op online com até 3 amigos.
+      </p>
+      <h2>Recursos</h2>
+      <ul>
+        <li>27 iniciais de todas as regiões, de Kanto a Paldea (Charmander, Squirtle, Bulbasaur, Piplup, Froakie, Fuecoco, Sprigatito e mais), cada um com sua linha evolutiva completa.</li>
+        <li>Co-op online para até 4 jogadores: crie uma sala e chame os amigos pelo link, pelo código de 5 letras ou pela lista de amigos, que mostra quem está online. Cada um joga com o seu Pokémon, a EXP é da equipe (todo mundo sobe de nível junto), a horda e os chefes crescem com o time, o ₽ é dividido entre todos e quem desmaia vira uma Poké Ball até um colega chegar perto para reanimar. Precisa de uma conta com @nome; por enquanto o co-op joga o modo normal, sem Modo Lendário, lugares, itens da loja, Noite das Bruxas e ranking.</li>
+        <li>Arena, um MOBA estilo Pokémon Unite em dois formatos, 4v4 de 7 minutos no Vale ou na Enseada e 3v3 rápido de 3 minutos na Clareira ou no Recife (os dois últimos, mapas de praia): dois times, Pokémon selvagens que soltam Energia, três gols por time (o da base abre quando um gol de rota cai), Drednaw no meio da partida e Zapdos nos 2 minutos finais, com pontos em dobro. Ataque básico automático e golpes mirados como no Unite, chat rápido, marcações, placar e rendição por votação. Contra bots na hora, sem conta, ou com amigos numa sala, escolhendo Azul ou Vermelho. Com conta, Casual e Ranqueada na fila pública, com temporadas de duas semanas de Poké Ball a Master Ball; no lobby, o Estádio fica ao sul da sua casa.</li>
+        <li>Ovos que chocam com os passos dados nas partidas: chefes, baús e fendas deixam ovos que liberam mais 54 Pokémon jogáveis de todos os tipos e gerações (Pikachu, Eevee, Gastly, Magikarp, Riolu, Gible, Bagon, Deino, Dreepy e mais), com 1% de chance de sair shiny. E Munchlax, que evolui em Snorlax, só sai do Ovo da Amizade, e quatro fantasmas (Litwick, Phantump, Drifloon e Sandygast) só saem do Ovo Assombrado, que o Duskull vende na Noite das Bruxas, e Porygon, Exeggcute, Scraggy e Smeargle (que copia o golpe dos inimigos com o Sketch) só saem do Ovo do Kecleon, até 6 por dia na Vitrine: 90 Pokémon jogáveis no total.</li>
+        <li>Convide amigos com o seu link: quem cria uma conta pelo convite ganha um Ovo da Amizade, e quem convida ganha presentes (Presente Misterioso) a cada amigo que joga de verdade: outro Ovo da Amizade, o título Embaixador(a) com uma moldura exclusiva, um Ovo ultra raro com 5 amigos e, com 10, um Dratini shiny.</li>
+        <li>207 golpes e 32 itens: cada família tem um golpe assinatura e aprende golpes novos a cada evolução, com mais golpes do que espaços, então cada partida monta um time diferente. Maximize um golpe comum com o item certo e ele evolui (Ember + Charcoal vira Flamethrower), e os evoluídos continuam subindo de nível.</li>
+        <li>Todo golpe se divide em dois caminhos no Nv 4 e no Nv 7, que mudam como ele joga. Cards raros e shiny, o botão Esquecer e um draft do 2º golpe no começo de cada partida.</li>
+        <li>91 Habilidades, escolhidas na primeira evolução (a Habilidade Oculta inclusa), e evoluções ramificadas: Eevee escolhe entre as 8 eeveelutions, e Kirlia, Snorunt, Poliwhirl, Scyther e Charcadet também.</li>
+        <li>Golpes de fora do repertório: chefes deixam TMs, o Tutor de Golpes aparece no mapa e cada lendário de fenda ensina o seu golpe lendário (Sacred Fire, Origin Pulse, Roar of Time…). Dois golpes no máximo se unem num golpe em dupla (Fire Pledge, Fusion Flare, Fusion Bolt…), e baús podem esconder itens amaldiçoados como Life Orb e Choice Band.</li>
+        <li>Vantagens de tipo, queimadura, veneno, paralisia, congelamento, confusão e mais, e um ataque especial para cada um dos 18 tipos, como Blast Burn, Hydro Cannon, Bolt Strike e Draco Meteor. Linhagens ágeis como Treecko, Riolu e Gible atacam em cadeia, saltando de inimigo em inimigo, e o Aegislash alterna entre a Forma Escudo e a Forma Lâmina.</li>
+        <li>415 Pokémon selvagens das 9 gerações, Dragões incluídos, com Kanto, Johto e Hoenn completos (todos menos os lendários e míticos), divididos em 5 faixas: cada partida sorteia um elenco diferente, de básicos no começo a evoluções no fim, puxado para os tipos de cada bioma.</li>
+        <li>Chefes lendários: Onix, Snorlax, um trio lendário sorteado a cada partida (as aves Articuno, Zapdos e Moltres, as feras Raikou, Entei e Suicune ou os Regis Regirock, Regice e Registeel) e Mewtwo, às vezes acompanhado de um mítico raro: Mew, Celebi ou Jirachi. Cada chefe tem até o próximo chegar, senão foge; o Mewtwo, no fim, empurra a horda para longe e vira um duelo. Os chefes miram no caminho que você vai fazer, saltam em quem foge e ganham um ataque novo na fúria. Os lendários do mapa chegam com uma entrada e tema próprio e lutam em 3 fases, até um golpe supremo com um lugar seguro marcado.</li>
+        <li>Cinco biomas por partida (Rota 1, Floresta de Viridian, Monte Moon, Monte Prateado e Torre de Lavender) e clima que muda a força dos tipos: sol, chuva, tempestade de areia, neve e névoa.</li>
+        <li>Inimigos com personalidade, no máximo um por fase: Chansey cura a horda, Bronzor e Bronzong protegem, Nidoqueen chama reforços, Voltorb, Electrode e Drifloon explodem, Magnemite e Vikavolt disparam raios e Hitmonlee e Lokix saltam sobre a horda. Cada fase também tem uma espécie que cospe de longe, com disparos do seu tipo que passam pela aura.</li>
+        <li>Pokémon Alfa: gigantes de brilho vermelho que não recuam com os golpes e investem numa linha vermelha que miram antes. Derrote um para ganhar EXP, ₽ e o Prêmio do Alfa, um level-up só de cartas raras.</li>
+        <li>Fendas épicas: duas por partida, com o relógio parado lá dentro. O clima do lendário avisa no céu, um rasgo se abre e você atravessa o domínio dele fugindo de uma ameaça: a maré da Caverna do Fundo do Mar (Kyogre), a lava da Caverna de Magma (Groudon), o Pilar Celeste desabando (Rayquaza), os redemoinhos das Ilhas Redemoinho (Lugia), a Torre do Sino em chamas (Ho-Oh), os saltos no tempo do Pilar Lança (Dialga), a névoa da Ilha do Sul (Latias e Latios juntos) e o Meteoro à Deriva (Deoxys). Depois vem uma batalha em 3 fases que transforma a arena, com golpes supremos como Origin Pulse e Roar of Time, e a Poké Ball no fim.</li>
+        <li>Modo Lendário: capture os 23 lendários (as aves, as feras, os Regis, Mew, Celebi, Jirachi, Mewtwo, Lugia, Ho-Oh, Kyogre, Groudon, Rayquaza, Dialga, Latias, Latios, Deoxys e Arceus) vencendo-os como chefes, e jogue com eles. Eles despertam no Nv 12 e 28 (Primal Kyogre, Primal Groudon, Mega Rayquaza), começam com o golpe lendário e uma Habilidade inata, enfrentam uma horda mais forte e têm um ranking só deles, em cada dificuldade. Na Noite das Bruxas de 2026 (24/10 a 2/11), o Darkrai chega como lenda de evento: a fenda do Pesadelo aparece nas partidas assombradas, e 2 vitórias o capturam para jogar com o Dark Void e a inata Bad Dreams; e, se a comunidade juntar 15 milhões de doces durante o evento, ele ganha a Mega Evolução para todos e desperta como Mega Darkrai no Nv 28. Quem o capturou fica com ele depois do evento.</li>
+        <li>Lugares para explorar: a entrada de uma caverna, de um cemitério ou de uma corrente de ar aparece no mapa. A Caverna Escura é uma Mystery Dungeon de andares no escuro, com escadas, Casa de Monstros e um baú no fundo; no Cemitério Assombrado só há fantasmas, e os espíritos deles despertam Spiritomb; e só quem joga com um Pokémon voador sobe Acima das Nuvens, onde asas trazidas pelo vento melhoram os atributos.</li>
+        <li>Pontos de interesse espalhados pelo mapa, em todos os biomas: uma casa abandonada sem telhado para entrar (com um caixote esquecido), um túnel de mina que atravessa a montanha e deixa a horda para trás, um labirinto de sebes com um baú no centro, ruínas Unown com um altar que acende e um acampamento abandonado com a fogueira ainda acesa. Moitas, troncos caídos, pedras e árvores deixam o caminho mais vivo.</li>
+        <li>Mega Evolução: vença um lendário de fenda para ganhar a Mega Stone e, na evolução final, Mega Evolua por 20 segundos. São 38 Megas em 33 linhagens, cada uma com status, especial e habilidade próprios: Venusaur, Charizard X e Y, Blastoise, Raichu X e Y, Alakazam, Gengar, Dragonite, Meganium, Feraligatr, Tyranitar, Sceptile, Blaziken, Swampert, Gardevoir, Gallade, Pidgeot, Gyarados, Ampharos, Scizor, Houndoom, Aggron, Manectric, Altaria, Banette, Glalie, Salamence, Metagross, Staraptor, Garchomp e Garchomp Z, Lucario e Lucario Z, Emboar, Chesnaught, Delphox e Greninja. Quem tem duas Megas escolhe a pedra. No Modo Lendário, Latias, Latios e Mewtwo (Y) também Mega Evoluem.</li>
+        <li>Modo sem fim depois de Mewtwo: a horda não para e Arceus, o ceifador, vem caçar você às 20:00.</li>
+        <li>Três dificuldades, todas liberadas desde o começo: Normal, Difícil e Pesadelo, com hordas brutais e metade da cura. Ficar parado não funciona: no fim da partida a horda empurra mais, bate mais forte e o próprio mapa ataca onde você está (raios na chuva, granizo na neve, Rock Slide, Stealth Rock), sempre marcado no chão antes.</li>
+        <li>Ranking por tempo sobrevivido em cada dificuldade, de hoje, da semana e de todos os tempos, com filtro por Pokémon e por amigos, e um ranking separado para o Modo Lendário. Com uma conta, você ganha um perfil público com link para compartilhar e pode seguir outros treinadores.</li>
+        <li>Shinies selvagens e iniciais shiny, Poké Dollars e melhorias permanentes na Loja do Kecleon, incluindo o Amuleto Brilhante, que dobra a chance de shiny.</li>
+        <li>Surto do dia: todo dia uma espécie selvagem toma conta de todas as partidas, a mesma para todo mundo, e o shiny dela aparece umas duas vezes por partida.</li>
+        <li>Desafio do dia: uma partida por dia igual para todo mundo (mesma semente, Pokémon e dificuldade, sem melhorias nem itens). Só a primeira partida terminada conta no ranking do desafio, e quem participa ganha uma fita de ouro (10% melhores), prata (metade de cima) ou bronze.</li>
+        <li>Loja do Kecleon: uma praça no lobby, a leste da casa do seu parceiro, onde o Kecleon atende e conversa com você. A Vitrine do dia é igual para todo mundo, com um brinde grátis por dia, o Ovo do Kecleon (₽ 10.000 o primeiro do dia, cada um depois pelo dobro do anterior, até 6 por dia), uma oferta com 30% off, o ovo do dia e um estilo; a Mochila leva consumíveis para a próxima partida (Lure, Incense, Rare Candy, Lucky Egg, Luck Incense, Honey, X Attack, Max Revive e Everstone); o irmão roxo do Kecleon vende TMs para sempre (incluindo 10 exclusivas: Pay Day, Thief, Protect, Hyper Beam, Rain Dance, Sunny Day, Swords Dance, Drain Punch, Thunder Wave e Fly), que você arma antes da partida, e itens de evolução, que abrem os caminhos que pedem um item (sem a Dawn Stone, nada de Gallade, e sem o Up-Grade, nada de Porygon2; sem itens, o Eevee vira Vaporeon, Jolteon ou Flareon, sorteado) e também podem cair dos chefes, só para a partida; o Treino tem as melhorias permanentes e as Tampinhas, +3% em tudo por nível para um Pokémon; o Estilo, molduras, fundos e papéis de parede; e na Expansão você investe para a loja crescer em 5 níveis, do Carrinho à Loja de Departamento, que dá o título Magnata e uma estátua dourada do Kecleon na praça. De sexta a domingo, a caravana do Meowth traz um ovo ultra, a Tampinha Dourada e TMs exclusivas, e aceita pechinchar; o cartão fidelidade dá um carimbo por dia de visita, com prêmios aos 7, 14, 30, 60 e 100 carimbos (um Ovo do Kecleon com shiny garantido); e nas datas especiais aparece uma barraca na praça, como a do Duskull na Noite das Bruxas, que vende o Ovo Assombrado, um por dia.</li>
+        <li>Dojo do Machoke: um lugar no lobby, a oeste da casa do seu parceiro, para treinar sem horda, sem relógio e sem desmaiar. Escolha qualquer Pokémon que você tem, suba e desça o nível de cada golpe (com os caminhos A e B), equipe itens, troque de forma e de habilidade e teste em 1, 3, 8 ou 24 alvos de 16 tipos (ou no Snorlax como chefe), com um medidor de DPS por golpe. Salve a build e, nas partidas, as cartas de nível, evolução e habilidade que seguem a build ganham a marca ★ BUILD.</li>
+        <li>Festival da Praça: uma vez por mês, a fonte da praça do Kecleon vira um pote da comunidade. Todo mundo joga Poké Dollars na fonte (até ₽ 200 mil por dia), e cada marco do pote vira um Presente para todos os jogadores, mesmo quem não doou. O primeiro, o Festival das Lanternas, vai de 03/11 a 16/11, com Ovo raro, a moldura Lanterna, 3 Lures, um Ovo do Kecleon e um Togepi shiny; quem doa ₽ 50 mil ganha o título Mecenas e os 10 maiores doadores vão para a placa da fonte.</li>
+        <li>Pokédex dentro do jogo com 584 espécies: registre cada uma que viu e derrotou, e capture os shinies que derrotar, os Pokémon que chocar e cada forma que jogar.</li>
+        <li>Missões diárias e semanais e 63 conquistas com medalhas de bronze, prata e ouro, algumas com títulos para exibir, como Caçador de Shinies e Caçador de Alfas. Algumas semanais e toda medalha de ouro também dão um ovo.</li>
+        <li>Eventos no mapa: altares de buff, fontes que curam, baús trancados com emboscada, armadilhas que ferem a horda e um Meowth fugindo com moedas. E missões de campo que pagam ₽ e cartas raras: defender um ovo no ninho, juntar Poké Balls perdidas contra o relógio e levar um Togepi perdido para casa.</li>
+        <li>Pixel art no estilo Pokémon Mystery Dungeon, em português, inglês, espanhol, francês e chinês tradicional.</li>
+        <li>Funciona no celular com joystick por toque e pode ser instalado como app.</li>
+      </ul>
+      <h2>Perguntas frequentes</h2>
+      <h3>Pokémon Survivors é o mesmo jogo que o PokéSurvivor?</h3>
+      <p>Não. Pokémon Survivors (pokemonsurvivors.com) e PokéSurvivor (pokesurvivor.com) são dois fan games diferentes, de autores diferentes, com nomes quase iguais. Pokémon Survivors é feito por Pedro Barretto; PokéSurvivor, por JPTER78.</p>
+      <h3>Pokémon Survivors é grátis?</h3>
+      <p>Sim. É gratuito, sem anúncios e sem compras. O código é aberto no GitHub.</p>
+      <h3>Precisa baixar alguma coisa?</h3>
+      <p>Não. Roda direto no navegador, no PC ou no celular.</p>
+      <h3>Dá para jogar com Pokémon lendários?</h3>
+      <p>Sim, no Modo Lendário. Vença um lendário como chefe para capturá-lo (3 vezes para a maioria, 5 para Mewtwo, 1 para os míticos) e ele fica jogável, com despertares no Nv 12 e 28 e um ranking só dos lendários. Na Noite das Bruxas de 2026, o Darkrai também: vença-o 2 vezes na fenda do Pesadelo.</p>
+      <h3>Dá para jogar com amigos?</h3>
+      <p>Sim. O co-op online junta até 4 treinadores na mesma partida, cada um com o seu Pokémon: crie uma sala e chame os amigos pelo link, pelo código ou pela lista de amigos. A EXP é da equipe, o ₽ é dividido entre todos e quem desmaia pode ser reanimado por um colega. É preciso uma conta com @nome. Por enquanto o co-op é o modo normal: Modo Lendário, lugares, itens da loja, eventos e ranking ficam nas partidas solo.</p>
+      <h3>Tem um modo MOBA parecido com Pokémon Unite?</h3>
+      <p>Sim, a Arena: um MOBA 4v4 de 7 minutos no Vale ou na Enseada (uma praia de rotas curvas e uma ilha no centro, ligada por píeres), com duas rotas e a selva no meio, ou uma partida 3v3 rápida de 3 minutos na Clareira ou no Recife (um canal corta o mapa, cruzado por pontes estreitas), mapas compactos com dois gols por time; cada partida sorteia o mapa, e numa sala com amigos o anfitrião escolhe. Derrote Pokémon selvagens para juntar Energia (até 30), leve-a até um gol do time rival e fique lá dentro para marcar; um golpe de um rival interrompe. No 4v4, cada time tem três gols, e o da base só abre quando cai um gol de rota. Na reta final (os 2 últimos minutos no 4v4, o último no 3v3) os pontos valem em dobro e o Zapdos pousa no centro. Os controles são os do Unite: o ataque básico sai sozinho, e o Golpe 1, o Golpe 2 e o Golpe Unite você lança e mira (Q, E e R, ou os botões na tela, com mira assistida), travando o alvo com um clique ou um toque. O time combina por chat rápido com frases prontas e marcações no mapa, vê o placar completo (abates, assistências, dano e cura) e pode votar pela rendição a partir da metade da partida. Jogue com os 27 iniciais, cada um com seu papel (Atacante, Velocista, Equilibrado, Defensor ou Suporte), contra bots na hora, sem conta, ou numa sala com amigos, escolhendo Azul ou Vermelho; os lugares vazios ficam com bots. Com conta, entre na fila pública, Casual ou Ranqueada: a Ranqueada tem temporadas de duas semanas, tiers de Poké Ball a Master Ball, ranking da temporada e um título no fim (a temporada 1 começa em 2 de novembro); o 3v3 é só Casual. Sair no meio ou ficar parado custa Fair Play, e a Ranqueada pede Fair Play 80 ou mais. No lobby, a Arena fica no Estádio, ao sul da sua casa, com o Ninjask de juiz.</p>
+      <h3>É um jogo oficial da Pokémon?</h3>
+      <p>
+        Não. É um fan game não oficial e sem fins lucrativos, sem ligação com Nintendo, The Pokémon Company, GAME FREAK ou
+        Creatures. Feito por Pedro Barretto.
+      </p>
+      <p>
+        <a href="/pokemon-survivors-vs-pokesurvivor/">Pokémon Survivors vs PokéSurvivor</a> · <a href="/jogos-pokemon-estilo-vampire-survivors/">Jogos de Pokémon estilo Vampire Survivors</a> ·
+        <a href="/pokedex/">Pokédex</a> · <a href="/guia/">Como jogar</a> · <a href="/novidades/">Novidades</a> ·
+        <a href="/legal/">Legal e privacidade</a> ·
+        <a href="https://www.pokemonsurvivors.com/en/" hreflang="en">Play in English</a> ·
+        <a href="https://www.pokemonsurvivors.com/es/" hreflang="es">Jugar en español</a> ·
+        <a href="https://www.pokemonsurvivors.com/fr/" hreflang="fr">Jouer en français</a> ·
+        <a href="https://www.pokemonsurvivors.com/zh-tw/" hreflang="zh-Hant">以繁體中文遊玩</a> ·
+        <a href="https://discord.gg/Vx3RWFsjaD">Servidor no Discord</a> ·
+        <a href="https://www.tiktok.com/@pokemonsurvivors" rel="me">Siga no TikTok</a> ·
+        <a href="https://www.youtube.com/@PokemonSurvivors" rel="me">Inscreva-se no YouTube</a> ·
+        <a href="https://www.instagram.com/pokemonsurvivors/" rel="me">Siga no Instagram</a> ·
+        <a href="https://github.com/pedrobarretto/pokemon-survivors">Código no GitHub</a>
+      </p>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+            </html>
