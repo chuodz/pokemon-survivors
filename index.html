@@ -1,75 +1,297 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <!-- Google Tag Manager -->
-    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PFLCK8W6"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'GTM-PFLCK8W6');
-    </script>
-    <!-- Fin de Google Tag Manager -->
-
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#101820" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="PoketSurvivol" />
-    <meta name="format-detection" content="telephone=no" />
-    <title>PoketSurvivol – Juego gratis estilo Vampire Survivors con monstruos</title>
-    <meta name="description" content="Juega gratis en el navegador o en el celular, sin descargar nada: un roguelite estilo Vampire Survivors. Elige entre varios iniciales, evoluciona, derrote jefes y captura criaturas legendarias. Juega solo o en co-op online." />
-    <link rel="canonical" href="https://poketsurvivol.netlify.app/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="PoketSurvivol" />
-    <meta property="og:url" content="https://poketsurvivol.netlify.app/" />
-    <meta property="og:title" content="PoketSurvivol – Vampire Survivors estilo monstruos, gratis" />
-    <meta property="og:description" content="Fan game gratuito estilo Vampire Survivors. Juega en el navegador o en el celular, sin descargar." />
-    <meta property="og:locale" content="es_LA" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="/assets/pokemon/4/portrait.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "WebSite",
-            "@id": "https://poketsurvivol.netlify.app/#website",
-            "name": "PoketSurvivol",
-            "url": "https://poketsurvivol.netlify.app/",
-            "inLanguage": ["es"]
-          },
-          {
-            "@type": "VideoGame",
-            "@id": "https://poketsurvivol.netlify.app/#game",
-            "name": "PoketSurvivol",
-            "alternateName": ["Poket Survivol", "Monster Survivors"],
-            "url": "https://poketsurvivol.netlify.app/",
-            "description": "Fan game gratuito y no oficial estilo Vampire Survivors. Sobrevive a hordas, gana experiencia, elige ataques y evoluciona en el juego. Roda en el navegador y en el celular, sin descarga.",
-            "genre": ["Roguelite", "Roguelike", "Bullet heaven", "Survivors-like", "Acción"],
-            "gamePlatform": ["Navegador", "Android", "iOS", "PC"],
-            "applicationCategory": "GameApplication",
-            "operatingSystem": "Cualquiera (navegador)",
-            "isAccessibleForFree": true,
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-            "isPartOf": { "@id": "https://poketsurvivol.netlify.app/#website" }
-          }
-        ]
-      }
-    </script>
-  </head>
-  <body>
-    <canvas id="game" aria-label="PoketSurvivol"></canvas>
-    <div id="ui"></div>
-    <!-- Text alternative to the canvas: read by screen readers, search engines and AI crawlers that don't run JS. -->
-    <main class="sr-only">
-      <h1>PoketSurvivol: juego gratis estilo Vampire Survivors</h1>
-      <p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeTibia MMO - Ultra Necrozma & Intercambios</title>
+    <style>
+        body { 
+            margin: 0; 
+            background: #121212; 
+            color: #fff; 
+            text-align: center; 
+            font-family: Arial, sans-serif; 
+        }
+        h1 { color: #ffcb05; font-size: 14px; margin: 2px 0; }
+        .game-panel {
+            max-width: 390px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border: 2px solid #ffcb05;
+            border-radius: 8px;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        p { margin: 2px 0; font-size: 10px; }
+        .bar-bg { width: 100%; background: #444; height: 6px; border-radius: 4px; overflow: hidden; margin: 2px 0; }
+        .bar-fill { height: 100%; background: #3b4cca; width: 0%; transition: width 0.3s; }
+        .hp-fill { background: #28a745; }
         
+        #game-arena { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #ffcb05; 
+            border-radius: 6px; 
+            margin: 2px auto;
+            width: 360px;
+            height: 130px;
+            background: linear-gradient(to bottom, #2b580c, #488c14);
+            box-sizing: border-box;
+            padding: 10px;
+            transition: background 0.5s ease;
+        }
+
+        .battle-card {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #ffcb05;
+            border-radius: 6px;
+            padding: 6px;
+            width: 46%;
+            font-size: 9px;
+            text-align: center;
+        }
+        .battle-card img { width: 45px; height: 45px; display: block; margin: 0 auto; }
+
+        .team-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #2a2a2a;
+            border-radius: 6px;
+            padding: 2px;
+            margin: 2px 0;
+        }
+        .poke-slot {
+            width: 31%;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 2px;
+            cursor: pointer;
+            font-size: 9px;
+        }
+        .poke-slot.active { border-color: #ffcb05; background: #443c15; }
+        .poke-slot img { width: 30px; height: 30px; display: block; margin: 0 auto; }
+
+        .dpad-container {
+            margin-top: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dpad-row { display: flex; }
+        .dpad-btn, .action-btn, .menu-btn {
+            background: #e3350d;
+            color: white;
+            font-weight: bold;
+            border: 2px solid #ffcb05;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .dpad-btn { width: 34px; height: 34px; font-size: 12px; margin: 1px; }
+        .action-btn { width: 31%; padding: 4px; margin-top: 2px; font-size: 9px; display: inline-block; }
+        .menu-btn { width: 23%; padding: 4px; margin: 1px; font-size: 8px; background: #3b4cca; display: inline-block; }
+        .btn-green { background: #28a745; }
+        .btn-blue { background: #3b4cca; }
+        .btn-orange { background: #d97706; }
+        .btn-purple { background: #8a2be2; }
+        .btn-shop { background: #d97706; }
+        .btn-trade { background: #9c27b0; }
+
+        .modal-window {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 330px;
+            max-height: 82vh;
+            background: #1a1a1a;
+            border: 3px solid #ffcb05;
+            border-radius: 8px;
+            padding: 8px;
+            z-index: 9999;
+            box-shadow: 0 0 15px rgba(0,0,0,0.9);
+            text-align: left;
+            overflow-y: auto;
+            font-size: 10px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ffcb05;
+            padding-bottom: 3px;
+            margin-bottom: 4px;
+            color: #ffcb05;
+            font-weight: bold;
+        }
+        .close-btn { background: #e3350d; color: #fff; border: none; border-radius: 4px; cursor: pointer; padding: 2px 5px; }
+
+        .box-section {
+            background: #2a2a2a;
+            border: 1px solid #ffcb05;
+            border-radius: 6px;
+            padding: 3px;
+            margin-top: 2px;
+            font-size: 9px;
+            text-align: left;
+        }
+        .shop-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 3px;
+            margin: 2px 0;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+        .buy-action-btn { padding: 2px 5px; font-size: 8px; background: #ffcb05; color: #000; font-weight: bold; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="game-panel" id="main-game-panel">
+        <h1>PokeTibia MMO - <span style="color:#ffcb05;">👑 chuodz [ADMIN]</span></h1>
+        <p>🔴 Balls: <b id="pokeballs">10</b> | 💰 $<span id="coins">5000</span> | 🟢 Online: <span id="online-players">1</span> | <span id="depot-status" style="color:#28a745;">Zona: Ruta 1 (Lv.1+)</span></p>
+
+        <!-- EQUIPO ACTIVO -->
+        <div id="team-container" class="team-bar"></div>
+        
+        <!-- ARENA DE COMBATE -->
+        <div id="game-arena">
+            <div class="battle-card" id="enemy-card">
+                <img id="e-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png">
+                <b><span id="e-name">Bulbasaur</span></b> [Lv.<span id="e-lvl">1</span>]<br>
+                <span id="e-rarity" style="color:#ffcb05; font-size:8px;">[Común]</span>
+                <div class="bar-bg"><div class="bar-fill hp-fill" id="e-hp-bar" style="width: 100%;"></div></div>
+                <span id="e-hp-text">60/60 HP</span>
+            </div>
+            
+            <div class="battle-card" id="player-battle-card">
+                <img id="p-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png">
+                <b><span id="p-name">Pikachu</span></b> [Lv.<span id="p-lvl">50</span>]<br>
+                <span id="p-rarity-txt" style="color:#aa44ff; font-size:8px;">[Místico]</span>
+                <div class="bar-bg"><div class="bar-fill hp-fill" id="p-hp-bar" style="width: 100%;"></div></div>
+                <span id="p-hp-text">800/800 HP</span>
+            </div>
+        </div>
+
+        <p id="battle-log">¡Combate MMO táctico activo!</p>
+        
+        <!-- BARRA DE ACCIONES -->
+        <div>
+            <button class="action-btn btn-green" onclick="castSpell('fast')">⚡ Ataque Rápido</button>
+            <button class="action-btn btn-orange" onclick="castSpell('heavy')">🔥 Rayo Fuerte</button>
+            <button class="action-btn btn-blue" onclick="tryCatch()">🔴 Pokéball</button>
+        </div>
+        <button class="action-btn btn-blue" style="width:100%; margin-top:2px;" onclick="changeRoute()">🗺️ Cambiar de Ruta (+10 Lvls, Máx 1000)</button>
+        <button class="action-btn btn-purple" style="width:100%; margin-top:2px;" onclick="triggerUltraBoss()">🌌 Invocación: Jefe Ultra Necrozma</button>
+
+        <!-- BOTONES DE MENÚ -->
+        <div style="margin-top:3px;">
+            <button class="menu-btn" onclick="toggleModal('shop-modal')">🛒 Tienda</button>
+            <button class="menu-btn" onclick="toggleModal('pokedex-modal')">📖 Pokédex</button>
+            <button class="menu-btn" onclick="toggleModal('inventory-modal')">🎒 Inventario</button>
+            <button class="menu-btn" onclick="toggleModal('box-modal')">📦 Caja</button>
+        </div>
+        <button class="menu-btn btn-trade" style="width:100%; margin-top:2px;" onclick="toggleModal('trade-modal')">🔄 Intercambio de Recompensas entre Usuarios (@usuario)</button>
+        <button class="menu-btn btn-shop" style="width:100%; margin-top:2px;" onclick="toggleModal('chat-modal')">💬 Chat Global & Privado</button>
+
+        <!-- D-PAD TÁCTIL -->
+        <div class="dpad-container">
+            <button class="dpad-btn" id="btn-up" onclick="moveAction('Arriba')">⬆️</button>
+            <div class="dpad-row">
+                <button class="dpad-btn" id="btn-left" onclick="moveAction('Izquierda')">⬅️</button>
+                <button class="dpad-btn" id="btn-down" onclick="moveAction('Abajo')">⬇️</button>
+                <button class="dpad-btn" id="btn-right" onclick="moveAction('Derecha')">➡️</button>
+            </div>
+        </div>
+
+        <div class="box-section">
+            <b>📜 Misión Activa:</b> <span id="quest-text">Caza Pokémon (0/10)</span>
+        </div>
+    </div>
+
+    <!-- VENTANAS FLOTANTES -->
+    <div id="shop-modal" class="modal-window">
+        <div class="modal-header"><span>🛒 PokéMart (Tienda Oficial)</span><button class="close-btn" onclick="toggleModal('shop-modal')">X</button></div>
+        <div class="shop-item-row"><span>🔴 Pokéball ($10)</span><button class="buy-action-btn" onclick="buyItem('pokeballs', 1, 10)">Comprar</button></div>
+        <div class="shop-item-row"><span>🔵 Great Ball ($25)</span><button class="buy-action-btn" onclick="buyItem('greatballs', 1, 25)">Comprar</button></div>
+        <div class="shop-item-row"><span>🟣 Ultra Ball ($50)</span><button class="buy-action-btn" onclick="buyItem('ultraballs', 1, 50)">Comprar</button></div>
+        <div class="shop-item-row"><span>🟡 Master Ball ($500)</span><button class="buy-action-btn" onclick="buyItem('masterballs', 1, 500)">Comprar</button></div>
+        <div class="shop-item-row"><span>🧪 Poción de HP ($15)</span><button class="buy-action-btn" onclick="buyItem('potions', 1, 15)">Comprar</button></div>
+        <div class="shop-item-row"><span>🧪 Super Poción ($30)</span><button class="buy-action-btn" onclick="buyItem('superpotions', 1, 30)">Comprar</button></div>
+        <div class="shop-item-row"><span>✨ Revivir Pokémon ($50)</span><button class="buy-action-btn" onclick="buyItem('revives', 1, 50)">Comprar</button></div>
+        <div class="shop-item-row"><span>💖 Elixir Curación Total ($100)</span><button class="buy-action-btn" onclick="buyItem('elixirs', 1, 100)">Comprar</button></div>
+        <div class="shop-item-row" style="background:#312; border-color:#852;"><span>💰 Vender Loot</span><button class="buy-action-btn" style="background:#28a745; color:#fff;" onclick="sellLoot()">Vender</button></div>
+    </div>
+
+    <div id="pokedex-modal" class="modal-window">
+        <div class="modal-header"><span>📖 Pokédex Nacional & Ultraentes</span><button class="close-btn" onclick="toggleModal('pokedex-modal')">X</button></div>
+        <div id="pokedex-content">Cargando...</div>
+    </div>
+
+    <div id="inventory-modal" class="modal-window">
+        <div class="modal-header"><span>🎒 Inventario & Uso de Ítems</span><button class="close-btn" onclick="toggleModal('inventory-modal')">X</button></div>
+        <div id="inventory-content">Vacío</div>
+    </div>
+
+    <div id="box-modal" class="modal-window">
+        <div class="modal-header"><span>📦 Caja & Gestión de Equipo</span><button class="close-btn" onclick="toggleModal('box-modal')">X</button></div>
+        <div id="box-content">Vacío</div>
+    </div>
+
+    <!-- NUEVA VENTANA DE INTERCAMBIO DE RECOMPENSAS ENTRE USUARIOS -->
+    <div id="trade-modal" class="modal-window">
+        <div class="modal-header"><span>🔄 Intercambio de Recompensas</span><button class="close-btn" onclick="toggleModal('trade-modal')">X</button></div>
+        <p style="color:#aaa; margin-bottom: 5px;">Envía recompensas o ítems directamente a la cuenta de otro usuario usando su @.</p>
+        <div style="margin-bottom: 5px;">
+            <label style="font-size:9px;">Usuario Destino (@):</label><br>
+            <input type="text" id="trade-user" placeholder="@tu_amigo" style="width: 96%; background: #222; color: #fff; border: 1px solid #555; padding: 3px; font-size: 9px; border-radius: 3px;">
+        </div>
+        <div style="margin-bottom: 5px;">
+            <label style="font-size:9px;">Seleccionar Recompensa / Ítem:</label><br>
+            <select id="trade-item-select" style="width: 98%; background: #222; color: #fff; border: 1px solid #555; padding: 3px; font-size: 9px; border-radius: 3px;">
+                <option value="pokeballs">Pokéballs</option>
+                <option value="masterballs">Master Ball</option>
+                <option value="potions">Poción de HP</option>
+                <option value="coins">PokéDollars ($)</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 8px;">
+            <label style="font-size:9px;">Cantidad:</label><br>
+            <input type="number" id="trade-amount" value="1" min="1" style="width: 96%; background: #222; color: #fff; border: 1px solid #555; padding: 3px; font-size: 9px; border-radius: 3px;">
+        </div>
+        <button onclick="executeTrade()" style="width: 100%; background: #28a745; color: #fff; font-weight: bold; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 9px;">🚀 Enviar Intercambio</button>
+    </div>
+
+    <div id="chat-modal" class="modal-window">
+        <div class="modal-header"><span>💬 Chat Global & Privado MMO</span><button class="close-btn" onclick="toggleModal('chat-modal')">X</button></div>
+        <div style="margin-bottom:3px;">
+            <button onclick="setChatMode('global')" id="btn-global" style="background:#28a745; color:#fff; border:none; padding:2px 5px; border-radius:3px; font-size:8px; cursor:pointer;">🌍 Global</button>
+            <button onclick="setChatMode('private')" id="btn-private" style="background:#444; color:#fff; border:none; padding:2px 5px; border-radius:3px; font-size:8px; cursor:pointer;">🔒 Privado</button>
+        </div>
+        <div id="chat-messages" style="background:#111; border:1px solid #444; height:95px; overflow-y:auto; padding:3px; font-size:9px; margin-bottom:3px; border-radius:4px;">
+            <div style="color:#ffcb05;">[Sistema]: ¡Conectado al servidor MMO!</div>
+        </div>
+        <div id="private-recipient-box" style="display:none; margin-bottom:3px;">
+            <input type="text" id="chat-to-user" placeholder="Usuario destino..." style="width:96%; background:#222; color:#fff; border:1px solid #555; padding:2px; font-size:8px; border-radius:3px;">
+        </div>
+        <div style="display:flex;">
+            <input type="text" id="chat-input" placeholder="Mensaje..." style="flex:1; background:#222; color:#fff; border:1px solid #555; padding:3px; font-size:9px; border-radius:3px;">
+            <button onclick="sendChatMessage()" style="background:#3b4cca; color:#fff; border:none; padding:3px 6px; font-size:9px; cursor:pointer; border-radius:3px; margin-left:3px;">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const pokemonNames = {
+            1: "Bulbasaur", 2: "Ivysaur", 3: "Venusaur",
+            4: "Charmander", 5: "Charmeleon", 6: "Charizard",
+            7: "Squirtle", 8: "Wartortle", 9: "Blastoise",
+            16: "Pidgey", 17: "Pidgeotto", 18: "Pidgeot",
+            25: "Pikachu", 26: "Raichu",
+            66: "Machop", 67: "Machoke", 68: "Machamp",
+            92: "Gastly", 93: "Haunter", 94: "Gengar",
+            14
