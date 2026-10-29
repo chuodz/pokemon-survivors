@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -13,32 +13,17 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Survivors" />
     <meta name="format-detection" content="telephone=no" />
-    <title>Pokémon Survivors – Jogo grátis estilo Vampire Survivors com Pokémon</title>
-    <meta name="description" content="Jogue grátis no navegador ou no celular, sem baixar nada: um roguelite estilo Vampire Survivors com Pokémon. Escolha entre 27 iniciais de todas as regiões (e mais 63 Pokémon que saem de ovos), evolua, derrote Mewtwo e capture os lendários para jogar com eles. Jogue sozinho ou em co-op online com até 3 amigos." />
-    <link rel="canonical" href="https://www.pokemonsurvivors.com/" />
-    <link rel="alternate" hreflang="pt-BR" href="https://www.pokemonsurvivors.com/" />
-    <link rel="alternate" hreflang="en" href="https://www.pokemonsurvivors.com/en/" />
-    <link rel="alternate" hreflang="es" href="https://www.pokemonsurvivors.com/es/" />
-    <link rel="alternate" hreflang="fr" href="https://www.pokemonsurvivors.com/fr/" />
-    <link rel="alternate" hreflang="zh-Hant" href="https://www.pokemonsurvivors.com/zh-tw/" />
-    <link rel="alternate" hreflang="x-default" href="https://www.pokemonsurvivors.com/en/" />
+    <title>EvoSurvivors – Juego gratis estilo Vampire Survivors con monstruos</title>
+    <meta name="description" content="Juega gratis en el navegador o en el celular, sin descargar nada: un roguelite estilo Vampire Survivors. Elige entre varios iniciales, evoluciona, derrote jefes y captura criaturas legendarias. Juega solo o en co-op online." />
+    <link rel="canonical" href="https://poketsurvivol.netlify.app/" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Pokémon Survivors" />
-    <meta property="og:url" content="https://www.pokemonsurvivors.com/" />
-    <meta property="og:title" content="Pokémon Survivors – Vampire Survivors com Pokémon, grátis" />
-    <meta property="og:description" content="Fan game gratuito estilo Vampire Survivors com Pokémon. Jogue no navegador ou no celular, sem baixar." />
-    <meta property="og:image" content="https://www.pokemonsurvivors.com/og.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Charizard enfrentando uma horda de Pokémon selvagens em pixel art" />
-    <meta property="og:locale" content="pt_BR" />
-    <meta property="og:locale:alternate" content="en_US" />
-    <meta property="og:locale:alternate" content="es_LA" />
-    <meta property="og:locale:alternate" content="fr_FR" />
-    <meta property="og:locale:alternate" content="zh_TW" />
+    <meta property="og:site_name" content="EvoSurvivors" />
+    <meta property="og:url" content="https://poketsurvivol.netlify.app/" />
+    <meta property="og:title" content="EvoSurvivors – Vampire Survivors estilo monstruos, gratis" />
+    <meta property="og:description" content="Fan game gratuito estilo Vampire Survivors. Juega en el navegador o en el celular, sin descargar." />
+    <meta property="og:locale" content="es_LA" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/assets/pokemon/4/portrait.png" />
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <script type="application/ld+json">
       {
@@ -46,151 +31,54 @@
         "@graph": [
           {
             "@type": "WebSite",
-            "@id": "https://www.pokemonsurvivors.com/#website",
-            "name": "Pokémon Survivors",
-            "url": "https://www.pokemonsurvivors.com/",
-            "inLanguage": ["pt-BR", "en", "es", "fr", "zh-Hant"]
+            "@id": "https://poketsurvivol.netlify.app/#website",
+            "name": "EvoSurvivors",
+            "url": "https://poketsurvivol.netlify.app/",
+            "inLanguage": ["es"]
           },
           {
             "@type": "VideoGame",
-            "@id": "https://www.pokemonsurvivors.com/#game",
-            "name": "Pokémon Survivors",
-            "alternateName": ["Pokemon Survivors", "Pokémon Survival", "Vampire Survivors com Pokémon"],
-            "url": "https://www.pokemonsurvivors.com/",
-            "description": "Fan game gratuito e não oficial estilo Vampire Survivors com Pokémon. Escolha um dos 27 iniciais ou choque ovos para liberar mais 63 Pokémon, sobreviva 15 minutos de hordas selvagens de todas as gerações, monte sua build entre 207 golpes, evolua e derrote Mewtwo. Vença os lendários para capturá-los e jogar com eles no Modo Lendário. Roda no navegador e no celular, sem download. Jogue sozinho ou em co-op online com até 3 amigos.",
-            "image": "https://www.pokemonsurvivors.com/og.png",
-            "genre": ["Roguelite", "Roguelike", "Bullet heaven", "Survivors-like", "Ação"],
+            "@id": "https://poketsurvivol.netlify.app/#game",
+            "name": "EvoSurvivors",
+            "alternateName": ["Evo Survivors", "Monster Survivors"],
+            "url": "https://poketsurvivol.netlify.app/",
+            "description": "Fan game gratuito y no oficial estilo Vampire Survivors. Sobrevive a hordas, gana experiencia, elige ataques y evoluciona en el juego. Roda en el navegador y en el celular, sin descarga.",
+            "genre": ["Roguelite", "Roguelike", "Bullet heaven", "Survivors-like", "Acción"],
             "gamePlatform": ["Navegador", "Android", "iOS", "PC"],
             "applicationCategory": "GameApplication",
-            "operatingSystem": "Qualquer (navegador)",
-            "playMode": ["SinglePlayer", "CoOp", "MultiPlayer"],
-            "numberOfPlayers": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 4 },
-            "inLanguage": ["pt-BR", "en", "es", "fr", "zh-Hant"],
+            "operatingSystem": "Cualquiera (navegador)",
             "isAccessibleForFree": true,
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
-            "author": { "@type": "Person", "name": "Pedro Barretto", "url": "https://pedrobarretto.com.br" },
-            "sameAs": ["https://github.com/pedrobarretto/pokemon-survivors", "https://discord.gg/Vx3RWFsjaD", "https://www.tiktok.com/@pokemonsurvivors", "https://www.youtube.com/@PokemonSurvivors", "https://www.instagram.com/pokemonsurvivors/"],
-            "isPartOf": { "@id": "https://www.pokemonsurvivors.com/#website" }
-          },
-          {
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "Pokémon Survivors é grátis?",
-                "acceptedAnswer": { "@type": "Answer", "text": "Sim. É um fan game gratuito, sem anúncios e sem compras. O código é aberto no GitHub." }
-              },
-              {
-                "@type": "Question",
-                "name": "Precisa baixar alguma coisa?",
-                "acceptedAnswer": { "@type": "Answer", "text": "Não. O jogo roda direto no navegador, no PC ou no celular. No celular dá para instalar como app em tela cheia pelo menu do navegador." }
-              },
-              {
-                "@type": "Question",
-                "name": "Como funciona o jogo?",
-                "acceptedAnswer": { "@type": "Answer", "text": "É um roguelite estilo Vampire Survivors: você só se move, e seu Pokémon ataca sozinho. Sobreviva 15 minutos de hordas, ganhe experiência, escolha golpes e itens a cada nível, evolua e enfrente chefes lendários até Mewtwo. No caminho, fendas épicas levam ao domínio de Lugia, Kyogre, Rayquaza e outros lendários, e depois de Mewtwo dá para seguir no modo sem fim contra Arceus." }
-              },
-              {
-                "@type": "Question",
-                "name": "Dá para jogar com Pokémon lendários?",
-                "acceptedAnswer": { "@type": "Answer", "text": "Sim, no Modo Lendário. Os 23 lendários do jogo (Kyogre, Groudon, Rayquaza, Lugia, Mewtwo, Arceus e outros) são capturados vencendo-os como chefes: 3 vitórias para os das fendas e dos trios, 5 para Mewtwo e 1 para Mew, Celebi e Jirachi. Arceus só se deixa capturar no modo sem fim, depois dos outros 22. No Modo Lendário eles despertam no Nv 12 e 28 (Primal Kyogre, Primal Groudon, Mega Rayquaza), a horda vem mais forte e há um ranking só deles. Na Noite das Bruxas de 2026 (24/10 a 2/11), o Darkrai chega como lenda de evento: a fenda do Pesadelo aparece nas partidas assombradas, e 2 vitórias o capturam para jogar com o Dark Void e a inata Bad Dreams; e, se a comunidade juntar 15 milhões de doces durante o evento, ele ganha a Mega Evolução para todos e desperta como Mega Darkrai no Nv 28. Quem o capturou fica com ele depois do evento." }
-              },
-              {
-                "@type": "Question",
-                "name": "Dá para jogar com amigos?",
-                "acceptedAnswer": { "@type": "Answer", "text": "Sim. O co-op online junta até 4 treinadores na mesma partida, cada um com o seu Pokémon: crie uma sala e chame os amigos pelo link, pelo código ou pela lista de amigos. A EXP é da equipe, o ₽ é dividido entre todos e quem desmaia pode ser reanimado por um colega. É preciso uma conta com @nome. Por enquanto o co-op é o modo normal: Modo Lendário, lugares, itens da loja, eventos e ranking ficam nas partidas solo." }
-              },
-              {
-                "@type": "Question",
-                "name": "É um jogo oficial da Pokémon?",
-                "acceptedAnswer": { "@type": "Answer", "text": "Não. É um fan game não oficial e sem fins lucrativos, sem ligação com Nintendo, The Pokémon Company, GAME FREAK ou Creatures." }
-              }
-            ]
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "isPartOf": { "@id": "https://poketsurvivol.netlify.app/#website" }
           }
         ]
       }
     </script>
   </head>
   <body>
-    <canvas id="game" aria-label="Pokémon Survivors"></canvas>
+    <canvas id="game" aria-label="EvoSurvivors"></canvas>
     <div id="ui"></div>
     <!-- Text alternative to the canvas: read by screen readers, search engines and AI crawlers that don't run JS. -->
     <main class="sr-only">
-      <h1>Pokémon Survivors: jogo grátis estilo Vampire Survivors com Pokémon</h1>
+      <h1>EvoSurvivors: juego gratis estilo Vampire Survivors</h1>
       <p>
-        Pokémon Survivors é um fan game gratuito e não oficial que mistura Pokémon com Vampire Survivors. É um roguelite
-        de ação (bullet heaven) que roda no navegador e no celular, sem download e sem cadastro.
+        EvoSurvivors es un fan game gratuito y no oficial de acción (bullet heaven) que corre en el navegador y en el celular, sin descargas y sin registros.
       </p>
-      <h2>Como jogar</h2>
+      <h2>Cómo jugar</h2>
       <p>
-        Escolha seu Pokémon inicial, ande pelo mapa e deixe ele atacar sozinho. Sobreviva 15 minutos de hordas de
-        Pokémon selvagens, colete experiência, aprenda golpes, equipe itens e evolua no meio da partida. No fim, enfrente
-        Mewtwo. Depois, continue no modo sem fim até Arceus vir caçar você. Vença os lendários como chefes para capturá-los
-        e jogue com eles no Modo Lendário.
-        Ou crie uma sala e jogue em co-op online com até 3 amigos.
+        Elige tu personaje inicial, muévete por el mapa y sobrevive a las hordas de enemigos, recolecta experiencia, aprende ataques y equípate para ganar.
       </p>
-      <h2>Recursos</h2>
-      <ul>
-        <li>27 iniciais de todas as regiões, de Kanto a Paldea (Charmander, Squirtle, Bulbasaur, Piplup, Froakie, Fuecoco, Sprigatito e mais), cada um com sua linha evolutiva completa.</li>
-        <li>Co-op online para até 4 jogadores: crie uma sala e chame os amigos pelo link, pelo código de 5 letras ou pela lista de amigos, que mostra quem está online. Cada um joga com o seu Pokémon, a EXP é da equipe (todo mundo sobe de nível junto), a horda e os chefes crescem com o time, o ₽ é dividido entre todos e quem desmaia vira uma Poké Ball até um colega chegar perto para reanimar. Precisa de uma conta com @nome; por enquanto o co-op joga o modo normal, sem Modo Lendário, lugares, itens da loja, Noite das Bruxas e ranking.</li>
-        <li>Ovos que chocam com os passos dados nas partidas: chefes, baús e fendas deixam ovos que liberam mais 54 Pokémon jogáveis de todos os tipos e gerações (Pikachu, Eevee, Gastly, Magikarp, Riolu, Gible, Bagon, Deino, Dreepy e mais), com 1% de chance de sair shiny. E Munchlax, que evolui em Snorlax, só sai do Ovo da Amizade, e quatro fantasmas (Litwick, Phantump, Drifloon e Sandygast) só saem do Ovo Assombrado, que o Duskull vende na Noite das Bruxas, e Porygon, Exeggcute, Scraggy e Smeargle (que copia o golpe dos inimigos com o Sketch) só saem do Ovo do Kecleon, até 6 por dia na Vitrine: 90 Pokémon jogáveis no total.</li>
-        <li>Convide amigos com o seu link: quem cria uma conta pelo convite ganha um Ovo da Amizade, e quem convida ganha presentes (Presente Misterioso) a cada amigo que joga de verdade: outro Ovo da Amizade, o título Embaixador(a) com uma moldura exclusiva, um Ovo ultra raro com 5 amigos e, com 10, um Dratini shiny.</li>
-        <li>207 golpes e 32 itens: cada família tem um golpe assinatura e aprende golpes novos a cada evolução, com mais golpes do que espaços, então cada partida monta um time diferente. Maximize um golpe comum com o item certo e ele evolui (Ember + Charcoal vira Flamethrower), e os evoluídos continuam subindo de nível.</li>
-        <li>Todo golpe se divide em dois caminhos no Nv 4 e no Nv 7, que mudam como ele joga. Cards raros e shiny, o botão Esquecer e um draft do 2º golpe no começo de cada partida.</li>
-        <li>91 Habilidades, escolhidas na primeira evolução (a Habilidade Oculta inclusa), e evoluções ramificadas: Eevee escolhe entre as 8 eeveelutions, e Kirlia, Snorunt, Poliwhirl, Scyther e Charcadet também.</li>
-        <li>Golpes de fora do repertório: chefes deixam TMs, o Tutor de Golpes aparece no mapa e cada lendário de fenda ensina o seu golpe lendário (Sacred Fire, Origin Pulse, Roar of Time…). Dois golpes no máximo se unem num golpe em dupla (Fire Pledge, Fusion Flare, Fusion Bolt…), e baús podem esconder itens amaldiçoados como Life Orb e Choice Band.</li>
-        <li>Vantagens de tipo, queimadura, veneno, paralisia, congelamento, confusão e mais, e um ataque especial para cada um dos 18 tipos, como Blast Burn, Hydro Cannon, Bolt Strike e Draco Meteor. Linhagens ágeis como Treecko, Riolu e Gible atacam em cadeia, saltando de inimigo em inimigo, e o Aegislash alterna entre a Forma Escudo e a Forma Lâmina.</li>
-        <li>415 Pokémon selvagens das 9 gerações, Dragões incluídos, com Kanto, Johto e Hoenn completos (todos menos os lendários e míticos), divididos em 5 faixas: cada partida sorteia um elenco diferente, de básicos no começo a evoluções no fim, puxado para os tipos de cada bioma.</li>
-        <li>Chefes lendários: Onix, Snorlax, um trio lendário sorteado a cada partida (as aves Articuno, Zapdos e Moltres, as feras Raikou, Entei e Suicune ou os Regis Regirock, Regice e Registeel) e Mewtwo, às vezes acompanhado de um mítico raro: Mew, Celebi ou Jirachi. Cada chefe tem até o próximo chegar, senão foge; o Mewtwo, no fim, empurra a horda para longe e vira um duelo. Os chefes miram no caminho que você vai fazer, saltam em quem foge e ganham um ataque novo na fúria. Os lendários do mapa chegam com uma entrada e tema próprio e lutam em 3 fases, até um golpe supremo com um lugar seguro marcado.</li>
-        <li>Cinco biomas por partida (Rota 1, Floresta de Viridian, Monte Moon, Monte Prateado e Torre de Lavender) e clima que muda a força dos tipos: sol, chuva, tempestade de areia, neve e névoa.</li>
-        <li>Inimigos com personalidade, no máximo um por fase: Chansey cura a horda, Bronzor e Bronzong protegem, Nidoqueen chama reforços, Voltorb, Electrode e Drifloon explodem, Magnemite e Vikavolt disparam raios e Hitmonlee e Lokix saltam sobre a horda. Cada fase também tem uma espécie que cospe de longe, com disparos do seu tipo que passam pela aura.</li>
-        <li>Pokémon Alfa: gigantes de brilho vermelho que não recuam com os golpes e investem numa linha vermelha que miram antes. Derrote um para ganhar EXP, ₽ e o Prêmio do Alfa, um level-up só de cartas raras.</li>
-        <li>Fendas épicas: duas por partida, com o relógio parado lá dentro. O clima do lendário avisa no céu, um rasgo se abre e você atravessa o domínio dele fugindo de uma ameaça: a maré da Caverna do Fundo do Mar (Kyogre), a lava da Caverna de Magma (Groudon), o Pilar Celeste desabando (Rayquaza), os redemoinhos das Ilhas Redemoinho (Lugia), a Torre do Sino em chamas (Ho-Oh), os saltos no tempo do Pilar Lança (Dialga), a névoa da Ilha do Sul (Latias e Latios juntos) e o Meteoro à Deriva (Deoxys). Depois vem uma batalha em 3 fases que transforma a arena, com golpes supremos como Origin Pulse e Roar of Time, e a Poké Ball no fim.</li>
-        <li>Modo Lendário: capture os 23 lendários (as aves, as feras, os Regis, Mew, Celebi, Jirachi, Mewtwo, Lugia, Ho-Oh, Kyogre, Groudon, Rayquaza, Dialga, Latias, Latios, Deoxys e Arceus) vencendo-os como chefes, e jogue com eles. Eles despertam no Nv 12 e 28 (Primal Kyogre, Primal Groudon, Mega Rayquaza), começam com o golpe lendário e uma Habilidade inata, enfrentam uma horda mais forte e têm um ranking só deles, em cada dificuldade. Na Noite das Bruxas de 2026 (24/10 a 2/11), o Darkrai chega como lenda de evento: a fenda do Pesadelo aparece nas partidas assombradas, e 2 vitórias o capturam para jogar com o Dark Void e a inata Bad Dreams; e, se a comunidade juntar 15 milhões de doces durante o evento, ele ganha a Mega Evolução para todos e desperta como Mega Darkrai no Nv 28. Quem o capturou fica com ele depois do evento.</li>
-        <li>Lugares para explorar: a entrada de uma caverna, de um cemitério ou de uma corrente de ar aparece no mapa. A Caverna Escura é uma Mystery Dungeon de andares no escuro, com escadas, Casa de Monstros e um baú no fundo; no Cemitério Assombrado só há fantasmas, e os espíritos deles despertam Spiritomb; e só quem joga com um Pokémon voador sobe Acima das Nuvens, onde asas trazidas pelo vento melhoram os atributos.</li>
-        <li>Pontos de interesse espalhados pelo mapa, em todos os biomas: uma casa abandonada sem telhado para entrar (com um caixote esquecido), um túnel de mina que atravessa a montanha e deixa a horda para trás, um labirinto de sebes com um baú no centro, ruínas Unown com um altar que acende e um acampamento abandonado com a fogueira ainda acesa. Moitas, troncos caídos, pedras e árvores deixam o caminho mais vivo.</li>
-        <li>Mega Evolução: vença um lendário de fenda para ganhar a Mega Stone e, na evolução final, Mega Evolua por 20 segundos. São 38 Megas em 33 linhagens, cada uma com status, especial e habilidade próprios: Venusaur, Charizard X e Y, Blastoise, Raichu X e Y, Alakazam, Gengar, Dragonite, Meganium, Feraligatr, Tyranitar, Sceptile, Blaziken, Swampert, Gardevoir, Gallade, Pidgeot, Gyarados, Ampharos, Scizor, Houndoom, Aggron, Manectric, Altaria, Banette, Glalie, Salamence, Metagross, Staraptor, Garchomp e Garchomp Z, Lucario e Lucario Z, Emboar, Chesnaught, Delphox e Greninja. Quem tem duas Megas escolhe a pedra. No Modo Lendário, Latias, Latios e Mewtwo (Y) também Mega Evoluem.</li>
-        <li>Modo sem fim depois de Mewtwo: a horda não para e Arceus, o ceifador, vem caçar você às 20:00.</li>
-        <li>Três dificuldades, todas liberadas desde o começo: Normal, Difícil e Pesadelo, com hordas brutais e metade da cura. Ficar parado não funciona: no fim da partida a horda empurra mais, bate mais forte e o próprio mapa ataca onde você está (raios na chuva, granizo na neve, Rock Slide, Stealth Rock), sempre marcado no chão antes.</li>
-        <li>Ranking por tempo sobrevivido em cada dificuldade, de hoje, da semana e de todos os tempos, com filtro por Pokémon e por amigos, e um ranking separado para o Modo Lendário. Com uma conta, você ganha um perfil público com link para compartilhar e pode seguir outros treinadores.</li>
-        <li>Shinies selvagens e iniciais shiny, Poké Dollars e melhorias permanentes na Loja do Kecleon, incluindo o Amuleto Brilhante, que dobra a chance de shiny.</li>
-        <li>Surto do dia: todo dia uma espécie selvagem toma conta de todas as partidas, a mesma para todo mundo, e o shiny dela aparece umas duas vezes por partida.</li>
-        <li>Desafio do dia: uma partida por dia igual para todo mundo (mesma semente, Pokémon e dificuldade, sem melhorias nem itens). Só a primeira partida terminada conta no ranking do desafio, e quem participa ganha uma fita de ouro (10% melhores), prata (metade de cima) ou bronze.</li>
-        <li>Loja do Kecleon: uma praça no lobby, a leste da casa do seu parceiro, onde o Kecleon atende e conversa com você. A Vitrine do dia é igual para todo mundo, com um brinde grátis por dia, o Ovo do Kecleon (₽ 10.000 o primeiro do dia, cada um depois pelo dobro do anterior, até 6 por dia), uma oferta com 30% off, o ovo do dia e um estilo; a Mochila leva consumíveis para a próxima partida (Lure, Incense, Rare Candy, Lucky Egg, Luck Incense, Honey, X Attack, Max Revive e Everstone); o irmão roxo do Kecleon vende TMs para sempre (incluindo 10 exclusivas: Pay Day, Thief, Protect, Hyper Beam, Rain Dance, Sunny Day, Swords Dance, Drain Punch, Thunder Wave e Fly), que você arma antes da partida, e itens de evolução, que abrem os caminhos que pedem um item (sem a Dawn Stone, nada de Gallade, e sem o Up-Grade, nada de Porygon2; sem itens, o Eevee vira Vaporeon, Jolteon ou Flareon, sorteado) e também podem cair dos chefes, só para a partida; o Treino tem as melhorias permanentes e as Tampinhas, +3% em tudo por nível para um Pokémon; o Estilo, molduras, fundos e papéis de parede; e na Expansão você investe para a loja crescer em 5 níveis, do Carrinho à Loja de Departamento, que dá o título Magnata e uma estátua dourada do Kecleon na praça. De sexta a domingo, a caravana do Meowth traz um ovo ultra, a Tampinha Dourada e TMs exclusivas, e aceita pechinchar; o cartão fidelidade dá um carimbo por dia de visita, com prêmios aos 7, 14, 30, 60 e 100 carimbos (um Ovo do Kecleon com shiny garantido); e nas datas especiais aparece uma barraca na praça, como a do Duskull na Noite das Bruxas, que vende o Ovo Assombrado, um por dia.</li>
-        <li>Dojo do Machoke: um lugar no lobby, a oeste da casa do seu parceiro, para treinar sem horda, sem relógio e sem desmaiar. Escolha qualquer Pokémon que você tem, suba e desça o nível de cada golpe (com os caminhos A e B), equipe itens, troque de forma e de habilidade e teste em 1, 3, 8 ou 24 alvos de 16 tipos (ou no Snorlax como chefe), com um medidor de DPS por golpe. Salve a build e, nas partidas, as cartas de nível, evolução e habilidade que seguem a build ganham a marca ★ BUILD.</li>
-        <li>Festival da Praça: uma vez por mês, a fonte da praça do Kecleon vira um pote da comunidade. Todo mundo joga Poké Dollars na fonte (até ₽ 200 mil por dia), e cada marco do pote vira um Presente para todos os jogadores, mesmo quem não doou. O primeiro, o Festival das Lanternas, vai de 03/11 a 16/11, com Ovo raro, a moldura Lanterna, 3 Lures, um Ovo do Kecleon e um Togepi shiny; quem doa ₽ 50 mil ganha o título Mecenas e os 10 maiores doadores vão para a placa da fonte.</li>
-        <li>Pokédex dentro do jogo com 584 espécies: registre cada uma que viu e derrotou, e capture os shinies que derrotar, os Pokémon que chocar e cada forma que jogar.</li>
-        <li>Missões diárias e semanais e 63 conquistas com medalhas de bronze, prata e ouro, algumas com títulos para exibir, como Caçador de Shinies e Caçador de Alfas. Algumas semanais e toda medalha de ouro também dão um ovo.</li>
-        <li>Eventos no mapa: altares de buff, fontes que curam, baús trancados com emboscada, armadilhas que ferem a horda e um Meowth fugindo com moedas. E missões de campo que pagam ₽ e cartas raras: defender um ovo no ninho, juntar Poké Balls perdidas contra o relógio e levar um Togepi perdido para casa.</li>
-        <li>Pixel art no estilo Pokémon Mystery Dungeon, em português, inglês e espanhol.</li>
-        <li>Funciona no celular com joystick por toque e pode ser instalado como app.</li>
-      </ul>
-      <h2>Perguntas frequentes</h2>
-      <h3>Pokémon Survivors é grátis?</h3>
-      <p>Sim. É gratuito, sem anúncios e sem compras. O código é aberto no GitHub.</p>
-      <h3>Precisa baixar alguma coisa?</h3>
-      <p>Não. Roda direto no navegador, no PC ou no celular.</p>
-      <h3>Dá para jogar com Pokémon lendários?</h3>
-      <p>Sim, no Modo Lendário. Vença um lendário como chefe para capturá-lo (3 vezes para a maioria, 5 para Mewtwo, 1 para os míticos) e ele fica jogável, com despertares no Nv 12 e 28 e um ranking só dos lendários. Na Noite das Bruxas de 2026, o Darkrai também: vença-o 2 vezes na fenda do Pesadelo.</p>
-      <h3>Dá para jogar com amigos?</h3>
-      <p>Sim. O co-op online junta até 4 treinadores na mesma partida, cada um com o seu Pokémon: crie uma sala e chame os amigos pelo link, pelo código ou pela lista de amigos. A EXP é da equipe, o ₽ é dividido entre todos e quem desmaia pode ser reanimado por um colega. É preciso uma conta com @nome. Por enquanto o co-op é o modo normal: Modo Lendário, lugares, itens da loja, eventos e ranking ficam nas partidas solo.</p>
-      <h3>É um jogo oficial da Pokémon?</h3>
+      <h2>Preguntas frecuentes</h2>
+      <h3>¿EvoSurvivors es gratis?</h3>
+      <p>Sí. Es gratuito, sin anuncios y sin compras abusivas.</p>
+      <h3>¿Necesita descarga?</h3>
+      <p>No. Corre directo en el navegador de tu PC o celular.</p>
+      <h3>¿Es un juego oficial?</h3>
       <p>
-        Não. É um fan game não oficial e sem fins lucrativos, sem ligação com Nintendo, The Pokémon Company, GAME FREAK ou
-        Creatures. Feito por Pedro Barretto.
+        No. Es un fan game independiente y sin fines lucrativos hecho por fans y para fans.
       </p>
       <p>
-        <a href="/pokedex/">Pokédex</a> · <a href="/guia/">Como jogar</a> · <a href="/novidades/">Novidades</a> ·
-        <a href="/legal/">Legal e privacidade</a> ·
-        <a href="https://www.pokemonsurvivors.com/en/" hreflang="en">Play in English</a> ·
-        <a href="https://www.pokemonsurvivors.com/es/" hreflang="es">Jugar en español</a> ·
-        <a href="https://www.pokemonsurvivors.com/fr/" hreflang="fr">Jouer en français</a> ·
-        <a href="https://www.pokemonsurvivors.com/zh-tw/" hreflang="zh-Hant">以繁體中文遊玩</a> ·
-        <a href="https://discord.gg/Vx3RWFsjaD">Servidor no Discord</a> ·
-        <a href="https://www.tiktok.com/@pokemonsurvivors" rel="me">Siga no TikTok</a> ·
-        <a href="https://www.youtube.com/@PokemonSurvivors" rel="me">Inscreva-se no YouTube</a> ·
-        <a href="https://www.instagram.com/pokemonsurvivors/" rel="me">Siga no Instagram</a> ·
-        <a href="https://github.com/pedrobarretto/pokemon-survivors">Código no GitHub</a>
+        <a href="https://github.com/chuodz">Código en GitHub</a>
       </p>
     </main>
     <script type="module" src="/src/main.ts"></script>
